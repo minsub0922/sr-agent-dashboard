@@ -1,7 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { SidebarNav, type ViewKey } from "./components/sidebar-nav";
+import { Tour, tourSteps } from "./components/tour";
 import { ChatView } from "./components/chat-view";
 import { Overview } from "./components/overview";
 import { InboxView } from "./components/inbox-view";
@@ -49,6 +50,7 @@ export default function App() {
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [openProject, setOpenProject] = useState<string | null>(null);
   const [openAgent, setOpenAgent] = useState<string | null>(null);
+  const [tourStep, setTourStep] = useState<number | null>(null);
 
   const inboxCount = notes.filter((n) => n.stage === "inbox").length;
 
@@ -56,6 +58,30 @@ export default function App() {
     setOpenProject(null);
     setView(v);
   }, []);
+
+  // 첫 방문 시 가이드 투어 자동 표시 (이후엔 사이드바 ? 버튼으로 재실행)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("srnote.tourSeen") !== "1") {
+        setTourStep(0);
+        localStorage.setItem("srnote.tourSeen", "1");
+      }
+    } catch {
+      setTourStep(0);
+    }
+  }, []);
+
+  // 투어 단계에 맞춰 화면 전환
+  useEffect(() => {
+    if (tourStep == null) return;
+    const v = tourSteps[tourStep].view;
+    if (v) navigate(v);
+  }, [tourStep, navigate]);
+
+  const startTour = useCallback(() => setTourStep(0), []);
+  const closeTour = useCallback(() => setTourStep(null), []);
+  const nextTour = useCallback(() => setTourStep((s) => (s == null ? null : s >= tourSteps.length - 1 ? null : s + 1)), []);
+  const prevTour = useCallback(() => setTourStep((s) => (s == null ? null : Math.max(0, s - 1))), []);
 
   const finalizeRoute = useCallback((noteId: string, projectId: string, agentId: string, confidence: number) => {
     setNotes((prev) =>
@@ -78,7 +104,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
-      <SidebarNav view={view} onChange={navigate} inboxCount={inboxCount} onOpenProject={setOpenProject} />
+      <SidebarNav view={view} onChange={navigate} inboxCount={inboxCount} onOpenProject={setOpenProject} onStartTour={startTour} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 overflow-y-auto">
@@ -117,6 +143,7 @@ export default function App() {
         onClose={() => setOpenAgent(null)}
         onOpenProject={setOpenProject}
       />
+      {tourStep !== null && <Tour stepIndex={tourStep} onNext={nextTour} onPrev={prevTour} onClose={closeTour} />}
       <Toaster position="bottom-right" />
     </div>
   );

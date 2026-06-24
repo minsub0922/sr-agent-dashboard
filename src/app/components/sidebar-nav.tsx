@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LayoutGrid, Inbox, FolderKanban, Bot, Tags, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical } from "lucide-react";
+import { LayoutGrid, Inbox, FolderKanban, Bot, Tags, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical, HelpCircle } from "lucide-react";
 import { cn } from "./ui/utils";
 import { AgentAvatar, StatusDot } from "./agent-bits";
 import { getAgent, projects } from "../data";
@@ -22,11 +22,13 @@ export function SidebarNav({
   onChange,
   inboxCount,
   onOpenProject,
+  onStartTour,
 }: {
   view: ViewKey;
   onChange: (v: ViewKey) => void;
   inboxCount: number;
   onOpenProject: (id: string) => void;
+  onStartTour: () => void;
 }) {
   const atlas = getAgent("a-atlas")!;
   const [projectsOpen, setProjectsOpen] = useState(true);
@@ -56,6 +58,7 @@ export function SidebarNav({
           return (
             <div key={key}>
               <button
+                data-tour={`nav-${key}`}
                 onClick={() => {
                   onChange(key);
                   if (isProjects) setProjectsOpen((o) => !o);
@@ -148,6 +151,14 @@ export function SidebarNav({
             <div className="truncate text-sm">김다혜</div>
             <div className="font-mono text-[10px] text-muted-foreground">플랫폼팀</div>
           </div>
+          <button
+            onClick={onStartTour}
+            title="둘러보기"
+            data-tour="help"
+            className="grid size-8 place-items-center rounded-lg border border-sidebar-border bg-card text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            <HelpCircle className="size-4" />
+          </button>
           <button
             title="알림"
             className="relative grid size-8 place-items-center rounded-lg border border-sidebar-border bg-card text-muted-foreground transition-colors hover:text-foreground"
