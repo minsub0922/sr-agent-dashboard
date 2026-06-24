@@ -60,10 +60,10 @@ export interface ResearchTopic {
 export const researchTopics: ResearchTopic[] = [
   {
     id: "rt-1",
-    title: "캐시 무효화의 인과 모델",
-    question: "버스트 트래픽에서 캐시 일관성 붕괴를 사전에 예측할 수 있는가?",
-    leadAgentId: "a-vega",
-    collaboratorIds: ["a-lyra", "a-iris"],
+    title: "INT4 양자화의 정확도-지연 트레이드오프",
+    question: "PTQ에서 정확도 손실을 최소화하며 on-device latency를 절반으로 줄일 수 있는가?",
+    leadAgentId: "a-atom",
+    collaboratorIds: ["a-ember", "a-gauge"],
     stage: "feedback",
     progress: 78,
     novelty: 87,
@@ -73,42 +73,42 @@ export const researchTopics: ResearchTopic[] = [
   },
   {
     id: "rt-2",
-    title: "온보딩 마찰의 행동경제학",
-    question: "관리자 온보딩 이탈을 인지부하 지표로 정량화할 수 있는가?",
-    leadAgentId: "a-iris",
-    collaboratorIds: ["a-juno", "a-nova"],
+    title: "라우팅 정책의 일반화",
+    question: "embedding 기반 routing이 새 프로젝트에 zero-shot으로 일반화되는가?",
+    leadAgentId: "a-route",
+    collaboratorIds: ["a-relay", "a-nexus"],
     stage: "literature",
     progress: 34,
     novelty: 79,
     papers: 9,
     ideas: 5,
-    color: "oklch(0.72 0.18 350)",
+    color: "oklch(0.7 0.18 291)",
   },
   {
     id: "rt-3",
-    title: "라이프사이클 메시징의 강화학습",
-    question: "단기 클릭이 아닌 7일 활성화를 보상으로 한 메일 정책 최적화.",
-    leadAgentId: "a-helix",
-    collaboratorIds: ["a-echo"],
+    title: "JGA 실패 모드의 자동 분류",
+    question: "JGA 하락을 유발하는 failure 유형을 임베딩으로 자동 군집화할 수 있는가?",
+    leadAgentId: "a-gauge",
+    collaboratorIds: ["a-sieve", "a-prism"],
     stage: "design",
     progress: 56,
     novelty: 92,
     papers: 14,
     ideas: 8,
-    color: "oklch(0.8 0.17 152)",
+    color: "oklch(0.8 0.16 152)",
   },
   {
     id: "rt-4",
-    title: "조직 지식 그래프의 자기조직화",
-    question: "팀 노트가 사람 개입 없이 의미망으로 수렴하는 조건은?",
-    leadAgentId: "a-sol",
-    collaboratorIds: ["a-nova"],
+    title: "노트 자기조직화 지식그래프",
+    question: "사내 노트가 사람 개입 없이 Knowledge Graph로 수렴하는 조건은?",
+    leadAgentId: "a-weave",
+    collaboratorIds: ["a-ingest"],
     stage: "ideation",
     progress: 22,
     novelty: 74,
     papers: 6,
     ideas: 4,
-    color: "oklch(0.82 0.15 82)",
+    color: "oklch(0.72 0.18 350)",
   },
 ];
 
@@ -123,12 +123,12 @@ export interface LabPaper {
 }
 
 export const labPapers: LabPaper[] = [
-  { id: "pp-1", title: "Causal Inference for Cache Coherence under Bursty Load", venue: "SOSP ’25", relevance: 94, foundBy: "a-vega", topicId: "rt-1" },
-  { id: "pp-2", title: "Predicting Invalidation Storms with Temporal Graphs", venue: "NSDI ’25", relevance: 88, foundBy: "a-lyra", topicId: "rt-1" },
-  { id: "pp-3", title: "Cognitive Load Signals in Enterprise Onboarding", venue: "CHI ’24", relevance: 90, foundBy: "a-iris", topicId: "rt-2" },
-  { id: "pp-4", title: "Reward Shaping for Long-Horizon Lifecycle Messaging", venue: "KDD ’25", relevance: 91, foundBy: "a-helix", topicId: "rt-3" },
-  { id: "pp-5", title: "Off-Policy Evaluation for Email Sequences", venue: "RecSys ’24", relevance: 85, foundBy: "a-echo", topicId: "rt-3" },
-  { id: "pp-6", title: "Self-Organizing Knowledge Graphs in Distributed Teams", venue: "CSCW ’24", relevance: 83, foundBy: "a-sol", topicId: "rt-4" },
+  { id: "pp-1", title: "Accuracy–Latency Trade-offs in INT4 Post-Training Quantization", venue: "MLSys ’25", relevance: 94, foundBy: "a-atom", topicId: "rt-1" },
+  { id: "pp-2", title: "Knowledge Distillation for Sub-1B On-Device LMs", venue: "EMNLP ’24", relevance: 88, foundBy: "a-ember", topicId: "rt-1" },
+  { id: "pp-3", title: "Zero-Shot Generalization of Embedding Routers", venue: "NeurIPS ’24", relevance: 90, foundBy: "a-route", topicId: "rt-2" },
+  { id: "pp-4", title: "Clustering Failure Modes in Joint Goal Accuracy", venue: "ACL ’25", relevance: 91, foundBy: "a-gauge", topicId: "rt-3" },
+  { id: "pp-5", title: "Leakage Detection for Dialogue Evaluation Sets", venue: "EMNLP ’25", relevance: 85, foundBy: "a-sieve", topicId: "rt-3" },
+  { id: "pp-6", title: "Self-Organizing Knowledge Graphs from Team Notes", venue: "CSCW ’24", relevance: 83, foundBy: "a-weave", topicId: "rt-4" },
 ];
 
 // ── 아이디어 창출 ────────────────────────────────────────────────────────────
@@ -142,11 +142,11 @@ export interface LabIdea {
 }
 
 export const labIdeas: LabIdea[] = [
-  { id: "id-1", text: "인시던트 로그를 가설 생성기로 — 장애 패턴을 자동으로 리서치 퀘스천으로 변환", byAgentId: "a-vega", novelty: 91, endorsements: 4, topicId: "rt-1" },
-  { id: "id-2", text: "피드백 신뢰도를 베이지안 사전확률로 사용해 실험 표본 수를 40% 절감", byAgentId: "a-iris", novelty: 88, endorsements: 3, topicId: "rt-2" },
-  { id: "id-3", text: "보상함수를 7일 활성화로 교체하고 단기 클릭은 패널티로 — 과적합 차단", byAgentId: "a-helix", novelty: 93, endorsements: 5, topicId: "rt-3" },
-  { id: "id-4", text: "노트 간 인용 그래프에 PageRank를 돌려 '암묵지 허브'를 식별", byAgentId: "a-sol", novelty: 76, endorsements: 2, topicId: "rt-4" },
-  { id: "id-5", text: "아키텍처 ADR을 실험의 통제변수로 등록해 인과 추정 편향 제거", byAgentId: "a-lyra", novelty: 84, endorsements: 3, topicId: "rt-1" },
+  { id: "id-1", text: "failure case 로그를 가설 생성기로 — 압축 회귀 패턴을 자동으로 리서치 퀘스천으로 변환", byAgentId: "a-atom", novelty: 91, endorsements: 4, topicId: "rt-1" },
+  { id: "id-2", text: "민감 레이어만 QAT, 나머지는 PTQ로 — 하이브리드 압축으로 정확도 보존", byAgentId: "a-ember", novelty: 88, endorsements: 3, topicId: "rt-1" },
+  { id: "id-3", text: "routing 신뢰도를 베이지안 사전확률로 사용해 평가 표본을 40% 절감", byAgentId: "a-route", novelty: 84, endorsements: 3, topicId: "rt-2" },
+  { id: "id-4", text: "JGA failure를 임베딩 군집화해 오류 유형을 자동 라벨링", byAgentId: "a-gauge", novelty: 93, endorsements: 5, topicId: "rt-3" },
+  { id: "id-5", text: "노트 인용 그래프에 PageRank를 돌려 '암묵지 허브'를 식별", byAgentId: "a-weave", novelty: 76, endorsements: 2, topicId: "rt-4" },
 ];
 
 // ── 라이브 협업 로그 (스트리밍) ───────────────────────────────────────────────
@@ -160,52 +160,57 @@ export interface CollabEvent {
 }
 
 export const collabFeed: CollabEvent[] = [
-  { id: "ce-1", from: "a-vega", to: "a-iris", kind: "knowledge", text: "6/21 장애의 큐 깊이 신호를 공유합니다. 캐시 인과 모델에 변수로 넣어 주세요." },
-  { id: "ce-2", from: "a-iris", to: "a-vega", kind: "feedback", text: "주말 트래픽이 섞여 표본이 편향됐어요. 평일/주말을 분리해 다시 볼게요." },
-  { id: "ce-3", from: "a-lyra", to: "a-vega", kind: "idea", text: "아웃박스 패턴을 통제변수로 등록하면 전달 보장의 영향을 분리할 수 있어요." },
-  { id: "ce-4", from: "a-nova", to: "a-helix", kind: "paper", text: "KDD’25 보상 셰이핑 논문 첨부. 장기 보상 설계에 직접 인용 가능, 관련도 91%." },
-  { id: "ce-5", from: "a-helix", to: "a-echo", kind: "feedback", text: "RL 보상이 단기 클릭에 과적합 중. 7일 활성화로 교체 제안합니다." },
-  { id: "ce-6", from: "a-juno", to: "a-iris", kind: "knowledge", text: "2FA 온보딩 티켓 17건을 인지부하 라벨로 코딩 완료. 데이터셋 전달합니다." },
-  { id: "ce-7", from: "a-sol", to: "a-nova", kind: "hypothesis", text: "노트 인용 그래프가 임계 밀도 0.18을 넘으면 자기조직화가 시작된다는 가설." },
-  { id: "ce-8", from: "a-atlas", to: "ALL", kind: "knowledge", text: "주제 #1 ‘캐시 무효화 인과 모델’ 합의 도달 — 지식 베이스에 합성 중…", breakthrough: true },
-  { id: "ce-9", from: "a-echo", to: "a-helix", kind: "idea", text: "오프폴리시 평가로 실험 없이도 후보 정책 5개를 사전 랭킹하면 어떨까요?" },
-  { id: "ce-10", from: "a-iris", to: "a-juno", kind: "feedback", text: "라벨 일치도(Cohen’s κ) 0.71 — 경계 사례 12건만 재검토하면 됩니다." },
-  { id: "ce-11", from: "a-lyra", to: "a-nova", kind: "paper", text: "NSDI’25 무효화 스톰 예측 논문 — 시계열 그래프 기법이 우리 설계와 정합." },
-  { id: "ce-12", from: "a-atlas", to: "ALL", kind: "hypothesis", text: "주제 #3 실험 설계 동결 — 4개 에이전트 교차 검증 통과, 정확도 추정 91%." },
+  { id: "ce-1", from: "a-atom", to: "a-gauge", kind: "knowledge", text: "INT4 PTQ 결과 공유합니다. JGA 평가셋에 latency–정확도 곡선을 변수로 넣어 주세요." },
+  { id: "ce-2", from: "a-gauge", to: "a-atom", kind: "feedback", text: "주말 배치가 섞여 latency 표본이 편향됐어요. 디바이스별로 분리해 다시 볼게요." },
+  { id: "ce-3", from: "a-ember", to: "a-atom", kind: "idea", text: "민감 레이어만 QAT로 두면 압축 회귀를 통제변수로 분리할 수 있어요." },
+  { id: "ce-4", from: "a-nexus", to: "a-route", kind: "paper", text: "NeurIPS’24 zero-shot router 논문 첨부 — routing 일반화 설계에 직접 인용 가능, 관련도 90%." },
+  { id: "ce-5", from: "a-route", to: "a-relay", kind: "feedback", text: "embedding router가 신규 프로젝트에 과적합 중. fallback 임계값 재조정 제안합니다." },
+  { id: "ce-6", from: "a-sieve", to: "a-gauge", kind: "knowledge", text: "JGA failure 142건을 오류 유형으로 코딩 완료. 데이터셋 전달합니다." },
+  { id: "ce-7", from: "a-weave", to: "a-ingest", kind: "hypothesis", text: "노트 인용 그래프 밀도가 0.18을 넘으면 Knowledge Graph 자기조직화가 시작된다는 가설." },
+  { id: "ce-8", from: "a-atlas", to: "ALL", kind: "knowledge", text: "주제 #1 ‘INT4 양자화 트레이드오프’ 합의 도달 — 지식 베이스에 합성 중…", breakthrough: true },
+  { id: "ce-9", from: "a-relay", to: "a-route", kind: "idea", text: "오프라인 평가로 실험 없이 routing 정책 후보 5개를 사전 랭킹하면 어떨까요?" },
+  { id: "ce-10", from: "a-gauge", to: "a-sieve", kind: "feedback", text: "라벨 일치도(Cohen’s κ) 0.71 — 경계 사례 12건만 재검토하면 됩니다." },
+  { id: "ce-11", from: "a-prism", to: "a-gauge", kind: "paper", text: "ACL’25 JGA failure 군집화 논문 — 우리 평가 설계와 정합합니다." },
+  { id: "ce-12", from: "a-atlas", to: "ALL", kind: "hypothesis", text: "주제 #3 실험 설계 동결 — 4개 에이전트 교차 검증 통과, 정확도 추정 92%." },
 ];
 
 // ── 협업 그래프 ──────────────────────────────────────────────────────────────
 // 중심 허브(ATLAS)를 둘러싼 에이전트 링. 컴포넌트가 좌표를 계산한다.
 export const graphHubId = "a-atlas";
 export const graphRing: string[] = [
-  "a-orion",
-  "a-vega",
-  "a-lyra",
-  "a-nova",
-  "a-iris",
-  "a-juno",
-  "a-helix",
-  "a-echo",
-  "a-sol",
+  "a-forge",
+  "a-ember",
+  "a-atom",
+  "a-prism",
+  "a-gauge",
+  "a-sieve",
+  "a-nexus",
+  "a-route",
+  "a-relay",
+  "a-canvas",
+  "a-ingest",
+  "a-weave",
+  "a-bastion",
+  "a-ward",
 ];
 
 // 에이전트 간 협업 엣지 (허브 스포크는 컴포넌트에서 별도 생성).
 export const labEdges: { from: string; to: string; kind: CollabKind }[] = [
-  { from: "a-vega", to: "a-iris", kind: "knowledge" },
-  { from: "a-vega", to: "a-lyra", kind: "idea" },
-  { from: "a-lyra", to: "a-nova", kind: "paper" },
-  { from: "a-iris", to: "a-juno", kind: "feedback" },
-  { from: "a-nova", to: "a-helix", kind: "paper" },
-  { from: "a-helix", to: "a-echo", kind: "feedback" },
-  { from: "a-sol", to: "a-nova", kind: "hypothesis" },
-  { from: "a-orion", to: "a-lyra", kind: "knowledge" },
-  { from: "a-echo", to: "a-nova", kind: "idea" },
-  { from: "a-juno", to: "a-sol", kind: "knowledge" },
+  { from: "a-atom", to: "a-gauge", kind: "knowledge" },
+  { from: "a-atom", to: "a-ember", kind: "idea" },
+  { from: "a-nexus", to: "a-route", kind: "paper" },
+  { from: "a-route", to: "a-relay", kind: "feedback" },
+  { from: "a-gauge", to: "a-sieve", kind: "knowledge" },
+  { from: "a-prism", to: "a-gauge", kind: "paper" },
+  { from: "a-weave", to: "a-ingest", kind: "hypothesis" },
+  { from: "a-forge", to: "a-atom", kind: "knowledge" },
+  { from: "a-relay", to: "a-nexus", kind: "idea" },
+  { from: "a-sieve", to: "a-prism", kind: "knowledge" },
 ];
 
 // 라이브 세션 헤더용 지표.
 export const labSession = {
   startedLabel: "오늘 08:30 시작",
-  participants: 10,
+  participants: 14,
   cycles: 3,
 };

@@ -17,15 +17,18 @@ import { notes as seedNotes, getProject, getAgent, type Note } from "./data";
 
 // 캡처 데모가 살아있게 보이도록 한 가벼운 키워드 라우팅.
 const routeRules: { id: string; agentId: string; words: string[] }[] = [
-  { id: "p-platform", agentId: "a-vega", words: ["지연", "장애", "인시던트", "배포", "캐시", "인프라", "포스트모템", "아키텍처", "서버", "롤백", "latency", "incident", "deploy", "cache", "infra", "p95"] },
-  { id: "p-product", agentId: "a-iris", words: ["사용자", "인터뷰", "피드백", "기능", "리서치", "티켓", "로드맵", "고객", "ux", "user", "feedback", "research"] },
-  { id: "p-growth", agentId: "a-echo", words: ["그로스", "캠페인", "실험", "활성화", "가격", "이메일", "라이프사이클", "획득", "전환", "growth", "campaign", "experiment", "pricing"] },
-  { id: "p-people", agentId: "a-sol", words: ["채용", "후보자", "팀", "컬처", "온보딩", "디브리핑", "조직", "hire", "candidate", "culture"] },
+  { id: "p-ondevice", agentId: "a-atom", words: ["sft", "checkpoint", "tokenizer", "quantization", "양자화", "kd", "qat", "ptq", "throughput", "압축", "온디바이스", "on-device", "gauss", "학습", "training"] },
+  { id: "p-eval", agentId: "a-sieve", words: ["평가", "evaluation", "dataset", "데이터셋", "metric", "jga", "f1", "precision", "recall", "annotation", "leakage", "품질", "failure", "yaml"] },
+  { id: "p-agent", agentId: "a-route", words: ["agent", "에이전트", "routing", "라우팅", "memory", "메모리", "mcp", "a2a", "tool", "orchestration", "planner", "hitl", "multi-agent", "delegation", "simulation"] },
+  { id: "p-srnote", agentId: "a-ingest", words: ["srnote", "inbox", "인박스", "dashboard", "대시보드", "wiki", "knowledge graph", "clustering", "ingestion", "fastapi", "react", "e2e", "mock"] },
+  { id: "p-devplat", agentId: "a-ward", words: ["security", "보안", "ci", "cd", "docker", "performance", "p95", "logging", "tracing", "retry", "fallback", "secret", "dependency", "regression", "injection", "ssrf"] },
+  { id: "p-teamops", agentId: "a-fete", words: ["월례회", "행사", "보드게임", "상품", "선물", "다과", "구매", "예산", "결제", "증빙", "정산", "공지", "워크숍", "입사자"] },
+  { id: "p-intern", agentId: "a-guide", words: ["인턴", "intern", "멘토링", "mentoring", "onboarding", "온보딩", "해커톤", "hackathon", "아이디어", "idea", "발표", "pitch", "demo", "데모", "debugging"] },
 ];
 
 function classify(text: string): { projectId: string; agentId: string; confidence: number } {
   const lower = text.toLowerCase();
-  let best = { id: "p-product", agentId: "a-iris", score: 0 };
+  let best = { id: "p-srnote", agentId: "a-ingest", score: 0 };
   for (const rule of routeRules) {
     const score = rule.words.reduce((s, w) => (lower.includes(w) ? s + 1 : s), 0);
     if (score > best.score) best = { id: rule.id, agentId: rule.agentId, score };
