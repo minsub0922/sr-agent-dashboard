@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { LayoutGrid, Inbox, FolderKanban, Bot, BookOpen, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare } from "lucide-react";
+import { LayoutGrid, Inbox, FolderKanban, Bot, BookOpen, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical } from "lucide-react";
 import { cn } from "./ui/utils";
 import { AgentAvatar, StatusDot } from "./agent-bits";
 import { getAgent, projects } from "../data";
 
-export type ViewKey = "overview" | "chat" | "inbox" | "projects" | "agents" | "knowledge" | "channels";
+export type ViewKey = "overview" | "chat" | "inbox" | "projects" | "agents" | "lab" | "knowledge" | "channels";
 
 const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
   { key: "chat", label: "채팅", icon: MessageSquare },
@@ -12,6 +12,7 @@ const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
   { key: "inbox", label: "인박스", icon: Inbox },
   { key: "projects", label: "프로젝트", icon: FolderKanban },
   { key: "agents", label: "에이전트", icon: Bot },
+  { key: "lab", label: "연구실", icon: FlaskConical },
   { key: "knowledge", label: "지식", icon: BookOpen },
   { key: "channels", label: "채널", icon: Radio },
 ];
@@ -66,8 +67,13 @@ export function SidebarNav({
                     : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground",
                 )}
               >
-                <Icon className={cn("size-4 transition-colors", active && "text-primary")} />
+                <Icon className={cn("size-4 transition-colors", (active || key === "lab") && "text-primary")} />
                 <span className="flex-1">{label}</span>
+                {key === "lab" && (
+                  <span className="rounded-full bg-gradient-to-r from-primary to-chart-5 px-1.5 font-mono text-[9px] uppercase tracking-wide text-primary-foreground">
+                    beta
+                  </span>
+                )}
                 {key === "inbox" && inboxCount > 0 && (
                   <span className="rounded-full bg-primary/15 px-1.5 font-mono text-[11px] text-primary tabular-nums">
                     {inboxCount}

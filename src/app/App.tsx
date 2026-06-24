@@ -7,6 +7,7 @@ import { Overview } from "./components/overview";
 import { InboxView } from "./components/inbox-view";
 import { ProjectsView } from "./components/projects-view";
 import { AgentsView } from "./components/agents-view";
+import { LabView } from "./components/lab-view";
 import { KnowledgeView } from "./components/knowledge-view";
 import { ChannelsView } from "./components/channels-view";
 import { ProjectPage } from "./components/project-page";
@@ -38,6 +39,7 @@ const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
   inbox: { title: "인박스", sub: "라우팅·검토 대기 중인 노트" },
   projects: { title: "프로젝트", sub: "리드 에이전트와 지식 베이스" },
   agents: { title: "에이전트", sub: "구성, 상태, 라우팅 성과" },
+  lab: { title: "연구실", sub: "에이전트 공동 연구 세션 · 실험적 베타" },
   knowledge: { title: "지식", sub: "전체 프로젝트의 최근 변경" },
   channels: { title: "채널", sub: "노트가 들어오는 경로" },
 };
@@ -108,6 +110,7 @@ export default function App() {
                 {view === "inbox" && <InboxView notes={notes} onRoute={handleRoute} />}
                 {view === "projects" && <ProjectsView onOpenProject={setOpenProject} />}
                 {view === "agents" && <AgentsView onOpenAgent={setOpenAgent} />}
+                {view === "lab" && <LabView onOpenAgent={setOpenAgent} />}
                 {view === "knowledge" && <KnowledgeView onOpenProject={setOpenProject} />}
                 {view === "channels" && <ChannelsView />}
               </>
