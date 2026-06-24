@@ -38,7 +38,7 @@ const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
   chat: { title: "채팅", sub: "에이전트와 대화" },
   inbox: { title: "인박스", sub: "라우팅·검토 대기 중인 노트" },
   projects: { title: "프로젝트", sub: "리드 에이전트와 지식 베이스" },
-  agents: { title: "에이전트", sub: "구성, 상태, 라우팅 성과" },
+  agents: { title: "에이전트", sub: "오케스트레이터 → 리드 → 서브 조직도" },
   lab: { title: "연구실", sub: "에이전트 공동 연구 세션 · 실험적 베타" },
   knowledge: { title: "지식", sub: "키워드로 보는 지식 지도" },
   channels: { title: "채널", sub: "노트가 들어오는 경로" },
