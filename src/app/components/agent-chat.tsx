@@ -12,7 +12,7 @@ interface Msg {
 let mid = 0;
 
 // 에이전트 페르소나에 맞춘 가벼운 모의 응답 생성기
-function buildReply(agent: Agent, input: string): string {
+export function buildReply(agent: Agent, input: string): string {
   const project = getProject(agent.projectId);
   const lower = input.toLowerCase();
   const handled = notes.filter((n) => n.agentId === agent.id && n.stage === "routed");
