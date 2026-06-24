@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { LayoutGrid, Inbox, FolderKanban, Bot, Tags, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical, HelpCircle } from "lucide-react";
+import { LayoutGrid, Inbox, FolderKanban, Bot, Tags, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical, HelpCircle, Puzzle } from "lucide-react";
 import { cn } from "./ui/utils";
 import { AgentAvatar, StatusDot } from "./agent-bits";
 import { getAgent, projects } from "../data";
 
-export type ViewKey = "overview" | "chat" | "inbox" | "projects" | "agents" | "lab" | "knowledge" | "channels";
+export type ViewKey = "overview" | "chat" | "inbox" | "projects" | "agents" | "lab" | "knowledge" | "skills" | "channels";
 
 const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
   { key: "chat", label: "채팅", icon: MessageSquare },
@@ -14,6 +14,7 @@ const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
   { key: "agents", label: "에이전트", icon: Bot },
   { key: "lab", label: "연구실", icon: FlaskConical },
   { key: "knowledge", label: "지식", icon: Tags },
+  { key: "skills", label: "스킬", icon: Puzzle },
   { key: "channels", label: "채널", icon: Radio },
 ];
 

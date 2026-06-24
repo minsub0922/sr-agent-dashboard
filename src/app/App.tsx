@@ -10,6 +10,7 @@ import { ProjectsView } from "./components/projects-view";
 import { AgentsView } from "./components/agents-view";
 import { LabView } from "./components/lab-view";
 import { KnowledgeView } from "./components/knowledge-view";
+import { SkillsView } from "./components/skills-view";
 import { ChannelsView } from "./components/channels-view";
 import { ProjectPage } from "./components/project-page";
 import { AgentDetail } from "./components/agent-detail";
@@ -45,6 +46,7 @@ const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
   agents: { title: "에이전트", sub: "오케스트레이터 → 리드 → 서브 조직도" },
   lab: { title: "연구실", sub: "에이전트 공동 연구 세션 · 실험적 베타" },
   knowledge: { title: "지식", sub: "키워드로 보는 지식 지도" },
+  skills: { title: "스킬", sub: "에이전트가 사용하는 스킬 · SKILL.md" },
   channels: { title: "채널", sub: "노트가 들어오는 경로" },
 };
 
@@ -133,6 +135,7 @@ export default function App() {
                 {view === "agents" && <AgentsView onOpenAgent={setOpenAgent} />}
                 {view === "lab" && <LabView onOpenAgent={setOpenAgent} />}
                 {view === "knowledge" && <KnowledgeView onOpenProject={setOpenProject} />}
+                {view === "skills" && <SkillsView onOpenAgent={setOpenAgent} />}
                 {view === "channels" && <ChannelsView />}
               </>
             )}
