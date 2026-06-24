@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LayoutGrid, Inbox, FolderKanban, Bot, BookOpen, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical } from "lucide-react";
+import { LayoutGrid, Inbox, FolderKanban, Bot, Tags, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare, FlaskConical } from "lucide-react";
 import { cn } from "./ui/utils";
 import { AgentAvatar, StatusDot } from "./agent-bits";
 import { getAgent, projects } from "../data";
@@ -13,7 +13,7 @@ const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
   { key: "projects", label: "프로젝트", icon: FolderKanban },
   { key: "agents", label: "에이전트", icon: Bot },
   { key: "lab", label: "연구실", icon: FlaskConical },
-  { key: "knowledge", label: "지식", icon: BookOpen },
+  { key: "knowledge", label: "지식", icon: Tags },
   { key: "channels", label: "채널", icon: Radio },
 ];
 

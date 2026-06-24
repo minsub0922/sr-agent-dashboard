@@ -34,13 +34,13 @@ function classify(text: string): { projectId: string; agentId: string; confidenc
 }
 
 const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
-  overview: { title: "개요", sub: "지식 메시의 실시간 상태" },
+  overview: { title: "개요", sub: "쌓인 지식의 성장 · 분포 · 변경 현황" },
   chat: { title: "채팅", sub: "에이전트와 대화" },
   inbox: { title: "인박스", sub: "라우팅·검토 대기 중인 노트" },
   projects: { title: "프로젝트", sub: "리드 에이전트와 지식 베이스" },
   agents: { title: "에이전트", sub: "구성, 상태, 라우팅 성과" },
   lab: { title: "연구실", sub: "에이전트 공동 연구 세션 · 실험적 베타" },
-  knowledge: { title: "지식", sub: "전체 프로젝트의 최근 변경" },
+  knowledge: { title: "지식", sub: "키워드로 보는 지식 지도" },
   channels: { title: "채널", sub: "노트가 들어오는 경로" },
 };
 
@@ -98,15 +98,7 @@ export default function App() {
                   <h1 className="tracking-tight">{pageMeta[view].title}</h1>
                   <p className="font-mono text-xs text-muted-foreground">{pageMeta[view].sub}</p>
                 </div>
-                {view === "overview" && (
-                  <Overview
-                    notes={notes}
-                    onRoute={handleRoute}
-                    onNavigate={navigate}
-                    onOpenProject={setOpenProject}
-                    onOpenAgent={setOpenAgent}
-                  />
-                )}
+                {view === "overview" && <Overview onNavigate={navigate} onOpenProject={setOpenProject} />}
                 {view === "inbox" && <InboxView notes={notes} onRoute={handleRoute} />}
                 {view === "projects" && <ProjectsView onOpenProject={setOpenProject} />}
                 {view === "agents" && <AgentsView onOpenAgent={setOpenAgent} />}

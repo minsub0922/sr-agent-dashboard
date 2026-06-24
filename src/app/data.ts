@@ -33,13 +33,20 @@ export interface Note {
   tags: string[];
 }
 
+export type KnowledgeDelta = "added" | "updated" | "merged";
+
 export interface KnowledgeEntry {
   id: string;
   title: string;
   summary: string;
   updatedAt: string;
   agentId: string;
-  delta: "added" | "updated" | "merged";
+  delta: KnowledgeDelta;
+  projectId: string; // 소속 프로젝트 — 에이전트의 projectId와 일치
+  tags: string[];
+  contributors: number; // 이 지식에 기여한 에이전트/사람 수
+  linkedNotes: number; // 이 지식으로 합성된 원천 노트 수
+  maturity: number; // 0-100, 검증·정착 정도(성숙도)
 }
 
 export interface Project {
@@ -270,11 +277,132 @@ export const notes: Note[] = [
 
 // ── 지식 변경 ──────────────────────────────────────────────────────────────
 export const knowledge: KnowledgeEntry[] = [
-  { id: "k-1", title: "이벤트 전달 전략", summary: "트랜잭셔널 아웃박스 패턴 채택을 반영해 업데이트.", updatedAt: "2026-06-24T08:06:00Z", agentId: "a-lyra", delta: "updated" },
-  { id: "k-2", title: "2FA / 백업 코드 UX", summary: "지원 티켓 3건에서 새 불편 사항을 병합.", updatedAt: "2026-06-24T07:41:00Z", agentId: "a-juno", delta: "merged" },
-  { id: "k-3", title: "온보딩 이메일 성과", summary: "v3 시퀀스 결과 추가: 7일차 활성화 +6.2%.", updatedAt: "2026-06-23T16:25:00Z", agentId: "a-echo", delta: "added" },
-  { id: "k-4", title: "캐시 레이어 롤아웃 리스크", summary: "커넥션 풀 고갈을 미해결 질문으로 플래그.", updatedAt: "2026-06-24T09:13:00Z", agentId: "a-vega", delta: "updated" },
-  { id: "k-5", title: "엔터프라이즈 온보딩 요구사항", summary: "CSV 역할 일괄 할당을 반복 요청으로 추가.", updatedAt: "2026-06-24T09:00:00Z", agentId: "a-iris", delta: "added" },
+  { id: "k-1", title: "이벤트 전달 전략", summary: "서비스 간 이벤트에 트랜잭셔널 아웃박스 패턴 채택을 반영해 업데이트. 최소 1회 전달 보장.", updatedAt: "2026-06-24T08:06:00Z", agentId: "a-lyra", delta: "updated", projectId: "p-platform", tags: ["아키텍처", "ADR"], contributors: 3, linkedNotes: 12, maturity: 88 },
+  { id: "k-2", title: "2FA / 백업 코드 UX", summary: "지원 티켓 3건에서 백업 코드 재생성 위치 혼란을 새 불편 사항으로 병합.", updatedAt: "2026-06-24T07:41:00Z", agentId: "a-juno", delta: "merged", projectId: "p-product", tags: ["피드백", "인증"], contributors: 4, linkedNotes: 17, maturity: 72 },
+  { id: "k-3", title: "온보딩 이메일 성과", summary: "v3 시퀀스 결과 추가: 홀드아웃 대비 7일차 활성화 +6.2% (95% 신뢰).", updatedAt: "2026-06-23T16:25:00Z", agentId: "a-echo", delta: "added", projectId: "p-growth", tags: ["실험", "라이프사이클"], contributors: 2, linkedNotes: 6, maturity: 64 },
+  { id: "k-4", title: "캐시 레이어 롤아웃 리스크", summary: "Redis 롤아웃 후 p95 급증 — 커넥션 풀 고갈을 미해결 질문으로 플래그.", updatedAt: "2026-06-24T09:13:00Z", agentId: "a-vega", delta: "updated", projectId: "p-platform", tags: ["인시던트", "지연"], contributors: 3, linkedNotes: 9, maturity: 58 },
+  { id: "k-5", title: "엔터프라이즈 온보딩 요구사항", summary: "CSV 역할 일괄 할당을 좌석 확장 블로커이자 반복 요청으로 추가.", updatedAt: "2026-06-24T09:00:00Z", agentId: "a-iris", delta: "added", projectId: "p-product", tags: ["리서치", "엔터프라이즈"], contributors: 2, linkedNotes: 5, maturity: 46 },
+  { id: "k-6", title: "멀티 리전 페일오버 런북", summary: "리전 단위 장애 시 트래픽 전환 절차를 6건 포스트모템에서 병합·표준화.", updatedAt: "2026-06-22T14:30:00Z", agentId: "a-orion", delta: "merged", projectId: "p-platform", tags: ["운영", "복원력"], contributors: 5, linkedNotes: 21, maturity: 94 },
+  { id: "k-7", title: "API 게이트웨이 레이트리밋 정책", summary: "테넌트별 버스트 한도와 429 백오프 헤더 규약을 최신 합의로 업데이트.", updatedAt: "2026-06-20T11:10:00Z", agentId: "a-orion", delta: "updated", projectId: "p-platform", tags: ["API", "정책"], contributors: 3, linkedNotes: 14, maturity: 90 },
+  { id: "k-8", title: "온콜 알림 임계값 재정의", summary: "큐 깊이·에러율 알림 임계값을 노이즈 감축 기준으로 신규 정리.", updatedAt: "2026-06-19T09:45:00Z", agentId: "a-vega", delta: "added", projectId: "p-platform", tags: ["온콜", "알림"], contributors: 2, linkedNotes: 8, maturity: 70 },
+  { id: "k-9", title: "모바일 검색 이탈 분석", summary: "검색 결과 0건 시 이탈률 급증 — 세션 리플레이 7건에서 패턴 추출해 신규 추가.", updatedAt: "2026-06-21T13:20:00Z", agentId: "a-iris", delta: "added", projectId: "p-product", tags: ["리서치", "모바일"], contributors: 2, linkedNotes: 7, maturity: 52 },
+  { id: "k-10", title: "대시보드 정보 구조 개편", summary: "핵심 작업 동선을 3단계에서 2단계로 줄이는 IA 개편안으로 업데이트.", updatedAt: "2026-06-18T10:05:00Z", agentId: "a-nova", delta: "updated", projectId: "p-product", tags: ["프로덕트", "IA"], contributors: 4, linkedNotes: 11, maturity: 76 },
+  { id: "k-11", title: "NPS 드라이버 분석 Q2", summary: "프로모터·디트랙터 코멘트 19건을 주제별로 병합 — 신뢰성이 최상위 동인.", updatedAt: "2026-06-16T15:40:00Z", agentId: "a-juno", delta: "merged", projectId: "p-product", tags: ["피드백", "NPS"], contributors: 3, linkedNotes: 19, maturity: 81 },
+  { id: "k-12", title: "연간 플랜 가격 탄력성", summary: "할인 구간별 전환·해지 곡선을 Q3 실험 데이터로 업데이트.", updatedAt: "2026-06-23T12:15:00Z", agentId: "a-helix", delta: "updated", projectId: "p-growth", tags: ["가격", "실험"], contributors: 3, linkedNotes: 10, maturity: 68 },
+  { id: "k-13", title: "리퍼럴 루프 실험 결과", summary: "양면 인센티브 리퍼럴이 초대 수락률 +14% — 신규 학습으로 추가.", updatedAt: "2026-06-17T17:30:00Z", agentId: "a-echo", delta: "added", projectId: "p-growth", tags: ["실험", "획득"], contributors: 2, linkedNotes: 6, maturity: 60 },
+  { id: "k-14", title: "스태프 엔지니어 채용 기준", summary: "시스템 설계 깊이 평가 루브릭을 디브리핑 13건 근거로 업데이트.", updatedAt: "2026-06-15T11:00:00Z", agentId: "a-sol", delta: "updated", projectId: "p-people", tags: ["채용", "기준"], contributors: 4, linkedNotes: 13, maturity: 78 },
+];
+
+// ── 지식 집계 (대시보드용) ───────────────────────────────────────────────────
+export const knowledgeDeltaLabel: Record<KnowledgeDelta, string> = {
+  added: "추가",
+  updated: "수정",
+  merged: "병합",
+};
+
+// 이번 주 변경 유형 분포
+export const knowledgeDeltaWeek: Record<KnowledgeDelta, number> = {
+  added: 18,
+  updated: 15,
+  merged: 8,
+};
+
+// 16주 누적 성장 추이 (total = 누적 지식 수, add = 해당 주 신규)
+export const knowledgeGrowth: { week: number; total: number; add: number }[] = [
+  { week: 16, total: 560, add: 24 },
+  { week: 15, total: 591, add: 31 },
+  { week: 14, total: 619, add: 28 },
+  { week: 13, total: 654, add: 35 },
+  { week: 12, total: 676, add: 22 },
+  { week: 11, total: 716, add: 40 },
+  { week: 10, total: 749, add: 33 },
+  { week: 9, total: 778, add: 29 },
+  { week: 8, total: 823, add: 45 },
+  { week: 7, total: 861, add: 38 },
+  { week: 6, total: 891, add: 30 },
+  { week: 5, total: 939, add: 48 },
+  { week: 4, total: 975, add: 36 },
+  { week: 3, total: 1017, add: 42 },
+  { week: 2, total: 1056, add: 39 },
+  { week: 1, total: 1097, add: 41 },
+];
+
+// 에이전트별 누적 지식 기여 (합계 = 프로젝트 knowledgeCount 총합 1,097)
+export const knowledgeByAgent: { agentId: string; count: number }[] = [
+  { agentId: "a-nova", count: 190 },
+  { agentId: "a-iris", count: 168 },
+  { agentId: "a-orion", count: 150 },
+  { agentId: "a-juno", count: 130 },
+  { agentId: "a-helix", count: 120 },
+  { agentId: "a-vega", count: 96 },
+  { agentId: "a-sol", count: 96 },
+  { agentId: "a-echo", count: 81 },
+  { agentId: "a-lyra", count: 66 },
+];
+
+// 최근 16주 일별 지식 기여 강도 — [주][요일], 0=기여 없음. 결정론적 시드.
+export const knowledgeHeatmap: number[][] = Array.from({ length: 16 }, (_, w) =>
+  Array.from({ length: 7 }, (_, d) => {
+    const weekend = d === 0 || d === 6;
+    const seed = Math.sin((w * 7 + d) * 99.13 + 17.7) * 43758.5453;
+    const base = seed - Math.floor(seed); // 0..1
+    const recency = 0.55 + (w / 15) * 0.75; // 최근 주가 더 활발
+    let v = Math.round(base * (weekend ? 3.2 : 8.4) * recency);
+    if (weekend && base < 0.45) v = 0;
+    return Math.max(0, Math.min(11, v));
+  }),
+);
+
+// 누적 지식에서 추출한 핵심 키워드 + 등장 빈도 (워드클라우드용)
+export interface Keyword {
+  term: string;
+  count: number;
+  projectId: string;
+}
+
+export const knowledgeKeywords: Keyword[] = [
+  // 플랫폼 & 인프라
+  { term: "인시던트", count: 98, projectId: "p-platform" },
+  { term: "아키텍처", count: 86, projectId: "p-platform" },
+  { term: "인프라", count: 60, projectId: "p-platform" },
+  { term: "캐시", count: 54, projectId: "p-platform" },
+  { term: "지연", count: 47, projectId: "p-platform" },
+  { term: "배포", count: 44, projectId: "p-platform" },
+  { term: "ADR", count: 41, projectId: "p-platform" },
+  { term: "온콜", count: 38, projectId: "p-platform" },
+  { term: "포스트모템", count: 31, projectId: "p-platform" },
+  { term: "복원력", count: 26, projectId: "p-platform" },
+  { term: "롤백", count: 22, projectId: "p-platform" },
+  { term: "레이트리밋", count: 19, projectId: "p-platform" },
+  // 프로덕트 디스커버리
+  { term: "리서치", count: 110, projectId: "p-product" },
+  { term: "피드백", count: 95, projectId: "p-product" },
+  { term: "온보딩", count: 68, projectId: "p-product" },
+  { term: "로드맵", count: 57, projectId: "p-product" },
+  { term: "인터뷰", count: 52, projectId: "p-product" },
+  { term: "UX", count: 49, projectId: "p-product" },
+  { term: "엔터프라이즈", count: 40, projectId: "p-product" },
+  { term: "모바일", count: 36, projectId: "p-product" },
+  { term: "인증", count: 33, projectId: "p-product" },
+  { term: "NPS", count: 29, projectId: "p-product" },
+  { term: "검색", count: 24, projectId: "p-product" },
+  // 그로스 & 라이프사이클
+  { term: "실험", count: 92, projectId: "p-growth" },
+  { term: "가격", count: 58, projectId: "p-growth" },
+  { term: "캠페인", count: 50, projectId: "p-growth" },
+  { term: "활성화", count: 45, projectId: "p-growth" },
+  { term: "전환", count: 39, projectId: "p-growth" },
+  { term: "라이프사이클", count: 34, projectId: "p-growth" },
+  { term: "획득", count: 30, projectId: "p-growth" },
+  { term: "리퍼럴", count: 21, projectId: "p-growth" },
+  { term: "A/B", count: 18, projectId: "p-growth" },
+  // 피플 & 조직
+  { term: "채용", count: 64, projectId: "p-people" },
+  { term: "조직", count: 35, projectId: "p-people" },
+  { term: "디브리핑", count: 27, projectId: "p-people" },
+  { term: "평가", count: 25, projectId: "p-people" },
+  { term: "컬처", count: 23, projectId: "p-people" },
+  { term: "레퍼런스", count: 14, projectId: "p-people" },
 ];
 
 // ── 활동 피드 ──────────────────────────────────────────────────────────────
