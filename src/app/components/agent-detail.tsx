@@ -85,7 +85,7 @@ export function AgentDetail({
         </div>
 
         {tab === "chat" ? (
-          <div className="p-6 pt-4">
+          <div className="h-[calc(100vh-16rem)] min-h-80 px-6 pb-6 pt-4">
             <AgentChat key={agent.id} agent={agent} />
           </div>
         ) : (

@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Toaster } from "./components/ui/sonner";
 import { SidebarNav, type ViewKey } from "./components/sidebar-nav";
-import { CaptureBar } from "./components/capture-bar";
+import { ChatView } from "./components/chat-view";
 import { Overview } from "./components/overview";
 import { InboxView } from "./components/inbox-view";
 import { ProjectsView } from "./components/projects-view";
@@ -34,6 +34,7 @@ function classify(text: string): { projectId: string; agentId: string; confidenc
 
 const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
   overview: { title: "개요", sub: "지식 메시의 실시간 상태" },
+  chat: { title: "채팅", sub: "에이전트와 대화" },
   inbox: { title: "인박스", sub: "라우팅·검토 대기 중인 노트" },
   projects: { title: "프로젝트", sub: "리드 에이전트와 지식 베이스" },
   agents: { title: "에이전트", sub: "구성, 상태, 라우팅 성과" },
@@ -41,10 +42,8 @@ const pageMeta: Record<ViewKey, { title: string; sub: string }> = {
   channels: { title: "채널", sub: "노트가 들어오는 경로" },
 };
 
-let nid = 100;
-
 export default function App() {
-  const [view, setView] = useState<ViewKey>("overview");
+  const [view, setView] = useState<ViewKey>("chat");
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [openProject, setOpenProject] = useState<string | null>(null);
   const [openAgent, setOpenAgent] = useState<string | null>(null);
@@ -67,48 +66,6 @@ export default function App() {
     });
   }, []);
 
-  const handleCapture = useCallback(
-    (text: string, chosenAgentId: string | null) => {
-      const id = `n-${nid++}`;
-      const chosen = getAgent(chosenAgentId);
-      // 에이전트를 지정하면 그 에이전트의 프로젝트로 바로 배정(처리 중 상태로 노출)
-      const newNote: Note = {
-        id,
-        excerpt: text.length > 160 ? text.slice(0, 157) + "…" : text,
-        fullText: text,
-        channel: "Web",
-        receivedAt: new Date().toISOString(),
-        stage: "analyzing",
-        agentId: chosen ? chosen.id : "a-atlas",
-        projectId: chosen ? chosen.projectId : null,
-        confidence: null,
-        tags: [],
-      };
-      setNotes((prev) => [newNote, ...prev]);
-
-      if (chosen) {
-        const project = getProject(chosen.projectId);
-        toast("노트가 전달되었습니다", { description: `${chosen.codename} · ${project?.name}에서 처리 중…` });
-        window.setTimeout(() => finalizeRoute(id, chosen.projectId!, chosen.id, 99), 2000);
-        return;
-      }
-
-      toast("노트가 수집되었습니다", { description: "ATLAS가 분석·분류하고 있어요…" });
-      const result = classify(text);
-      window.setTimeout(() => {
-        if (result.confidence >= 60) {
-          finalizeRoute(id, result.projectId, result.agentId, result.confidence);
-        } else {
-          setNotes((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, stage: "inbox", confidence: result.confidence } : n)),
-          );
-          toast.warning("인박스로 보냈습니다", { description: "신뢰도가 낮아 사람의 검토가 필요해요." });
-        }
-      }, 2200);
-    },
-    [finalizeRoute],
-  );
-
   const handleRoute = useCallback(
     (note: Note) => {
       const result = classify(note.fullText);
@@ -123,11 +80,6 @@ export default function App() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 overflow-y-auto">
-          {/* 지속 노출되는 캡처 바 */}
-          <div className="sticky top-0 z-10 border-b border-border bg-background/85 px-7 py-4 backdrop-blur">
-            <CaptureBar onCapture={handleCapture} />
-          </div>
-
           <main className="px-7 py-6">
             {openProject ? (
               <ProjectPage
@@ -136,6 +88,8 @@ export default function App() {
                 onBack={() => setOpenProject(null)}
                 onOpenAgent={setOpenAgent}
               />
+            ) : view === "chat" ? (
+              <ChatView />
             ) : (
               <>
                 <div className="mb-6">

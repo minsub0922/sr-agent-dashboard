@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { LayoutGrid, Inbox, FolderKanban, Bot, BookOpen, Radio, Settings, ChevronRight, Search, Command, Bell } from "lucide-react";
+import { LayoutGrid, Inbox, FolderKanban, Bot, BookOpen, Radio, Settings, ChevronRight, Search, Command, Bell, MessageSquare } from "lucide-react";
 import { cn } from "./ui/utils";
 import { AgentAvatar, StatusDot } from "./agent-bits";
 import { getAgent, projects } from "../data";
 
-export type ViewKey = "overview" | "inbox" | "projects" | "agents" | "knowledge" | "channels";
+export type ViewKey = "overview" | "chat" | "inbox" | "projects" | "agents" | "knowledge" | "channels";
 
 const nav: { key: ViewKey; label: string; icon: typeof Inbox }[] = [
+  { key: "chat", label: "채팅", icon: MessageSquare },
   { key: "overview", label: "개요", icon: LayoutGrid },
   { key: "inbox", label: "인박스", icon: Inbox },
   { key: "projects", label: "프로젝트", icon: FolderKanban },

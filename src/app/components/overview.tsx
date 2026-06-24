@@ -72,7 +72,7 @@ export function Overview({
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="tracking-tight">에이전트 현황</h2>
+            <h2 className="tracking-tight">AI 에이전트</h2>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-signal/15 px-2 py-0.5 font-mono text-[11px] text-signal">
               <span className="size-1.5 animate-pulse rounded-full bg-signal" />
               {agents.filter((a) => a.status !== "idle").length}명 활동 중
@@ -94,7 +94,7 @@ export function Overview({
         <section className="space-y-4 xl:col-span-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <h2 className="tracking-tight">라이브 파이프라인</h2>
+              <h2 className="tracking-tight">방금 들어온 노트</h2>
               {analyzing.length > 0 && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-2 py-0.5 font-mono text-[11px] text-primary">
                   <span className="size-1.5 animate-pulse rounded-full bg-primary" />
@@ -115,7 +115,7 @@ export function Overview({
 
         {/* 활동 피드 */}
         <section className="space-y-4">
-          <h2 className="tracking-tight">에이전트 활동</h2>
+          <h2 className="tracking-tight">최근 활동</h2>
           <div className="rounded-xl border border-border bg-card p-2">
             {activity.map((item, i) => {
               const agent = getAgent(item.agentId)!;

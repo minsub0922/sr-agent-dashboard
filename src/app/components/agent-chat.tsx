@@ -67,7 +67,7 @@ export function AgentChat({ agent }: { agent: Agent }) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-15rem)] min-h-80 flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       {/* 메시지 목록 */}
       <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto pr-1">
         {messages.map((m) =>
