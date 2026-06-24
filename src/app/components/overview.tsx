@@ -1,9 +1,8 @@
 import { Inbox, Workflow, BrainCircuit, Boxes } from "lucide-react";
 import type { Note } from "../data";
-import { activity, agents, getAgent, projects, timeAgo } from "../data";
-import { AgentAvatar, StatusDot } from "./agent-bits";
+import { activity, getAgent, projects, timeAgo } from "../data";
+import { AgentAvatar, StatusDot, statusLabel } from "./agent-bits";
 import { NoteCard } from "./note-card";
-import { AgentGridCard } from "./agent-grid-card";
 import type { ViewKey } from "./sidebar-nav";
 
 function StatChip({
@@ -52,11 +51,6 @@ export function Overview({
   const inbox = notes.filter((n) => n.stage === "inbox");
   const pipeline = [...analyzing, ...inbox, ...notes.filter((n) => n.stage === "routed")].slice(0, 4);
 
-  const roster = [...agents].sort((a, b) => {
-    const order = { processing: 0, active: 1, training: 2, idle: 3 } as const;
-    return order[a.status] - order[b.status];
-  });
-
   return (
     <div className="space-y-8">
       {/* 요약 지표 — 최상단 가로 스크롤 */}
@@ -68,24 +62,65 @@ export function Overview({
         <StatChip icon={Workflow} label="자동 라우팅" value="92%" sub="최근 7일" accent="oklch(0.72 0.18 350)" />
       </div>
 
-      {/* 에이전트 현황 */}
-      <section className="space-y-3">
+      {/* 프로젝트 (에이전트 팀 포함) */}
+      <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="tracking-tight">AI 에이전트</h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-signal/15 px-2 py-0.5 font-mono text-[11px] text-signal">
-              <span className="size-1.5 animate-pulse rounded-full bg-signal" />
-              {agents.filter((a) => a.status !== "idle").length}명 활동 중
-            </span>
-          </div>
-          <button onClick={() => onNavigate("agents")} className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground">
-            전체 에이전트 →
+          <h2 className="tracking-tight">프로젝트</h2>
+          <button onClick={() => onNavigate("projects")} className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground">
+            전체 프로젝트 →
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {roster.slice(0, 9).map((a) => (
-            <AgentGridCard key={a.id} agent={a} onOpen={onOpenAgent} />
-          ))}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {projects.map((p) => {
+            const lead = getAgent(p.leadAgentId)!;
+            const team = [lead, ...p.subAgentIds.map((id) => getAgent(id)!)];
+            return (
+              <button
+                key={p.id}
+                onClick={() => onOpenProject(p.id)}
+                className="group rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/40"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="size-2 rounded-full" style={{ background: p.color }} />
+                  <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{p.codename}</span>
+                  <span className="ml-auto font-mono text-[11px] text-muted-foreground">{timeAgo(p.lastUpdated)}</span>
+                </div>
+                <div className="mt-2 tracking-tight">{p.name}</div>
+
+                {/* 소속 에이전트 팀 */}
+                <div className="mt-3 rounded-lg border border-border bg-background/40 p-2.5">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">에이전트 팀</span>
+                    <span className="font-mono text-[10px] text-muted-foreground">{team.length}명</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AgentAvatar agent={lead} size={28} live />
+                    <div className="min-w-0 flex-1 leading-tight">
+                      <div className="flex items-center gap-1.5">
+                        <span className="truncate font-mono text-xs" style={{ color: lead.accent }}>{lead.codename}</span>
+                        <span className="rounded bg-secondary px-1 font-mono text-[9px] uppercase text-muted-foreground">리드</span>
+                      </div>
+                      <div className="font-mono text-[10px] text-muted-foreground">{statusLabel(lead.status)}</div>
+                    </div>
+                    <div className="flex -space-x-1.5">
+                      {p.subAgentIds.map((id) => {
+                        const a = getAgent(id)!;
+                        return <AgentAvatar key={id} agent={a} size={22} showRing={false} />;
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-3 flex items-center gap-4 border-t border-border pt-3 font-mono text-[11px] text-muted-foreground">
+                  <span>노트 {p.noteCount.toLocaleString()}</span>
+                  <span>지식 {p.knowledgeCount}</span>
+                  <span className="ml-auto flex items-center gap-1.5">
+                    <StatusDot status={lead.status} />
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </section>
 
@@ -143,50 +178,6 @@ export function Overview({
           </div>
         </section>
       </div>
-
-      {/* 프로젝트 */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="tracking-tight">프로젝트</h2>
-          <button onClick={() => onNavigate("projects")} className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground">
-            전체 프로젝트 →
-          </button>
-        </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {projects.map((p) => {
-            const lead = getAgent(p.leadAgentId)!;
-            return (
-              <button
-                key={p.id}
-                onClick={() => onOpenProject(p.id)}
-                className="group rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-primary/40"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="size-2 rounded-full" style={{ background: p.color }} />
-                  <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">{p.codename}</span>
-                  <span className="ml-auto font-mono text-[11px] text-muted-foreground">{timeAgo(p.lastUpdated)}</span>
-                </div>
-                <div className="mt-2 tracking-tight">{p.name}</div>
-                <div className="mt-3 flex items-center gap-2">
-                  <AgentAvatar agent={lead} size={24} />
-                  <span className="font-mono text-xs" style={{ color: lead.accent }}>{lead.codename}</span>
-                  <StatusDot status={lead.status} />
-                  <div className="ml-auto flex -space-x-1.5">
-                    {p.subAgentIds.map((id) => {
-                      const a = getAgent(id)!;
-                      return <AgentAvatar key={id} agent={a} size={20} showRing={false} />;
-                    })}
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center gap-4 border-t border-border pt-3 font-mono text-[11px] text-muted-foreground">
-                  <span>노트 {p.noteCount.toLocaleString()}</span>
-                  <span>지식 {p.knowledgeCount}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </section>
     </div>
   );
 }
