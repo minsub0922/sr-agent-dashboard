@@ -15,6 +15,7 @@ import { ChannelsView } from "./components/channels-view";
 import { ProjectPage } from "./components/project-page";
 import { AgentDetail } from "./components/agent-detail";
 import { notes as seedNotes, getProject, getAgent, type Note } from "./data";
+import { planOrganize, registerPlan, type OrganizePlan } from "./inbox-organize";
 
 // 캡처 데모가 살아있게 보이도록 한 가벼운 키워드 라우팅.
 const routeRules: { id: string; agentId: string; words: string[] }[] = [
@@ -107,6 +108,21 @@ export default function App() {
     [finalizeRoute],
   );
 
+  // 인박스 자동 정리: 미분류 노트 분석·클러스터링 → 기존 배정 또는 신규 프로젝트/에이전트 생성
+  const buildPlan = useCallback(() => planOrganize(notes), [notes]);
+  const commitPlan = useCallback((plan: OrganizePlan) => {
+    registerPlan(plan);
+    setNotes((prev) =>
+      prev.map((n) => {
+        const a = plan.assignments[n.id];
+        return a ? { ...n, stage: "routed" as const, projectId: a.projectId, agentId: a.agentId, confidence: a.confidence } : n;
+      }),
+    );
+    toast.success("인박스 자동 정리 완료", {
+      description: `${plan.total}건 라우팅${plan.emerging ? " · 신규 프로젝트 1개 · 에이전트 2명 생성" : ""}`,
+    });
+  }, []);
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
       <SidebarNav view={view} onChange={navigate} inboxCount={inboxCount} onOpenProject={setOpenProject} onStartTour={startTour} />
@@ -130,7 +146,7 @@ export default function App() {
                   <p className="font-mono text-xs text-muted-foreground">{pageMeta[view].sub}</p>
                 </div>
                 {view === "overview" && <Overview onNavigate={navigate} onOpenProject={setOpenProject} />}
-                {view === "inbox" && <InboxView notes={notes} onRoute={handleRoute} />}
+                {view === "inbox" && <InboxView notes={notes} onRoute={handleRoute} onBuildPlan={buildPlan} onCommitPlan={commitPlan} />}
                 {view === "projects" && <ProjectsView onOpenProject={setOpenProject} />}
                 {view === "agents" && <AgentsView onOpenAgent={setOpenAgent} />}
                 {view === "lab" && <LabView onOpenAgent={setOpenAgent} />}
