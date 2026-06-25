@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Activity, BookOpen, FolderKanban, Target, Hash, MessageSquare, User } from "lucide-react";
+import { Activity, BookOpen, FolderKanban, Target, Hash, MessageSquare, User, Settings2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "./ui/sheet";
 import type { Note } from "../data";
 import { getAgent, getProject, knowledge, timeAgo } from "../data";
 import { StatusDot, statusLabel } from "./agent-bits";
 import { NoteCard } from "./note-card";
 import { AgentChat } from "./agent-chat";
+import { AgentSettings } from "./agent-settings";
 import { cn } from "./ui/utils";
 
 export function AgentDetail({
@@ -19,7 +20,7 @@ export function AgentDetail({
   onClose: () => void;
   onOpenProject: (id: string) => void;
 }) {
-  const [tab, setTab] = useState<"profile" | "chat">("profile");
+  const [tab, setTab] = useState<"profile" | "chat" | "settings">("profile");
   useEffect(() => setTab("profile"), [agentId]);
 
   const agent = getAgent(agentId);
@@ -81,6 +82,7 @@ export function AgentDetail({
           <div className="mt-4 flex items-center gap-1 rounded-lg border border-border bg-card p-1">
             <TabButton active={tab === "profile"} onClick={() => setTab("profile")} icon={User} label="프로필" />
             <TabButton active={tab === "chat"} onClick={() => setTab("chat")} icon={MessageSquare} label="대화" />
+            <TabButton active={tab === "settings"} onClick={() => setTab("settings")} icon={Settings2} label="설정" />
           </div>
         </div>
 
@@ -88,6 +90,8 @@ export function AgentDetail({
           <div className="h-[calc(100vh-16rem)] min-h-80 px-6 pb-6 pt-4">
             <AgentChat key={agent.id} agent={agent} />
           </div>
+        ) : tab === "settings" ? (
+          <AgentSettings key={agent.id} agent={agent} />
         ) : (
         <div className="space-y-7 p-6">
           {/* 작성한 지식 */}
