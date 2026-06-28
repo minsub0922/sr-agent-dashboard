@@ -73,10 +73,10 @@ export const candidateTopics: CandidateTopic[] = [
     impact: 90,
     recommended: true,
     hypotheses: [
-      { id: "h1-1", statement: "레이어 민감도 상위 15%에만 QAT를 적용하면 INT4 PTQ 대비 JGA 손실을 2%p 이내로 막으면서 p95 지연을 45% 절감한다.", basis: "민감도 프로파일이 소수 레이어에 집중된다는 예비 관측", byAgentId: "a-atom", novelty: 90, feasibility: 84, testability: 88, recommended: true },
-      { id: "h1-2", statement: "레이어 민감도는 활성값 분산만으로 근사 가능하며, 보정 데이터 200스텝 이내에서 안정적으로 수렴한다.", basis: "활성값 통계와 양자화 오차의 상관", byAgentId: "a-ember", novelty: 82, feasibility: 88, testability: 84 },
-      { id: "h1-3", statement: "하이브리드 양자화의 이득은 모델 규모가 커질수록 체감하며, 1B 미만 구간에서 최대가 된다.", basis: "소형 모델일수록 레이어별 용량 여유가 적음", byAgentId: "a-forge", novelty: 78, feasibility: 80, testability: 79 },
-      { id: "h1-4", statement: "KV-cache를 INT8로 유지하면 가중치 INT4의 정확도 손실 상당 부분이 상쇄된다.", basis: "디코딩 단계 누적 오차의 주원인이 KV-cache라는 가설", byAgentId: "a-bastion", novelty: 85, feasibility: 76, testability: 82 },
+      { id: "h1-1", statement: "레이어 민감도 상위 15%에만 QAT를 적용하면 INT4 PTQ 대비 JGA 손실을 2%p 이내로 막으면서 p95 지연을 45% 절감한다.", basis: "민감도 프로파일이 소수 레이어에 집중된다는 예비 관측", byAgentId: "x-hypo", novelty: 90, feasibility: 84, testability: 88, recommended: true },
+      { id: "h1-2", statement: "레이어 민감도는 활성값 분산만으로 근사 가능하며, 보정 데이터 200스텝 이내에서 안정적으로 수렴한다.", basis: "활성값 통계와 양자화 오차의 상관", byAgentId: "x-power", novelty: 82, feasibility: 88, testability: 84 },
+      { id: "h1-3", statement: "하이브리드 양자화의 이득은 모델 규모가 커질수록 체감하며, 1B 미만 구간에서 최대가 된다.", basis: "소형 모델일수록 레이어별 용량 여유가 적음", byAgentId: "x-prior", novelty: 78, feasibility: 80, testability: 79 },
+      { id: "h1-4", statement: "KV-cache를 INT8로 유지하면 가중치 INT4의 정확도 손실 상당 부분이 상쇄된다.", basis: "디코딩 단계 누적 오차의 주원인이 KV-cache라는 가설", byAgentId: "x-confound", novelty: 85, feasibility: 76, testability: 82 },
     ],
   },
   {
@@ -91,10 +91,10 @@ export const candidateTopics: CandidateTopic[] = [
     feasibility: 88,
     impact: 84,
     hypotheses: [
-      { id: "h2-1", statement: "신규 프로젝트의 임베딩 분포가 기존 프로젝트의 볼록 껍질 안에 들어오면 라우팅 정확도가 90%를 넘는다.", basis: "분포 내삽 영역에서 일반화가 성립한다는 통념", byAgentId: "a-route", novelty: 84, feasibility: 86, testability: 88, recommended: true },
-      { id: "h2-2", statement: "온도 보정만으로 도메인 시프트 하의 라우팅 신뢰도 오차(ECE)를 절반으로 줄일 수 있다.", basis: "신뢰도 과대추정이 주된 실패 원인", byAgentId: "a-gauge", novelty: 80, feasibility: 90, testability: 85 },
-      { id: "h2-3", statement: "폴백 임계값을 신뢰도 분위수로 동적 설정하면 미탐 라우팅을 30% 줄인다.", basis: "고정 임계값의 분포 민감성", byAgentId: "a-relay", novelty: 76, feasibility: 88, testability: 83 },
-      { id: "h2-4", statement: "프로젝트당 8개 예시만으로 few-shot 보정해도 zero-shot 대비 정확도가 7%p 오른다.", basis: "소수 앵커가 임베딩 공간을 빠르게 정렬", byAgentId: "a-nexus", novelty: 78, feasibility: 84, testability: 80 },
+      { id: "h2-1", statement: "신규 프로젝트의 임베딩 분포가 기존 프로젝트의 볼록 껍질 안에 들어오면 라우팅 정확도가 90%를 넘는다.", basis: "분포 내삽 영역에서 일반화가 성립한다는 통념", byAgentId: "x-hypo", novelty: 84, feasibility: 86, testability: 88, recommended: true },
+      { id: "h2-2", statement: "온도 보정만으로 도메인 시프트 하의 라우팅 신뢰도 오차(ECE)를 절반으로 줄일 수 있다.", basis: "신뢰도 과대추정이 주된 실패 원인", byAgentId: "x-power", novelty: 80, feasibility: 90, testability: 85 },
+      { id: "h2-3", statement: "폴백 임계값을 신뢰도 분위수로 동적 설정하면 미탐 라우팅을 30% 줄인다.", basis: "고정 임계값의 분포 민감성", byAgentId: "x-prior", novelty: 76, feasibility: 88, testability: 83 },
+      { id: "h2-4", statement: "프로젝트당 8개 예시만으로 few-shot 보정해도 zero-shot 대비 정확도가 7%p 오른다.", basis: "소수 앵커가 임베딩 공간을 빠르게 정렬", byAgentId: "x-confound", novelty: 78, feasibility: 84, testability: 80 },
     ],
   },
   {
@@ -109,10 +109,10 @@ export const candidateTopics: CandidateTopic[] = [
     feasibility: 75,
     impact: 86,
     hypotheses: [
-      { id: "h3-1", statement: "실패 발화의 임베딩 군집은 사람이 정의한 오류 분류체계와 NMI 0.6 이상으로 일치한다.", basis: "실패 유형이 표현 공간에서 분리 가능하다는 가정", byAgentId: "a-sieve", novelty: 90, feasibility: 78, testability: 86, recommended: true },
-      { id: "h3-2", statement: "군집 경계 사례만 능동 표집하면 동일 정확도를 표본 40%로 달성한다.", basis: "경계 표본의 정보량이 가장 큼", byAgentId: "a-gauge", novelty: 86, feasibility: 82, testability: 88 },
-      { id: "h3-3", statement: "슬롯 유형을 조건으로 주면 군집 순도가 유의하게 상승한다.", basis: "슬롯별 실패 양상의 이질성", byAgentId: "a-prism", novelty: 80, feasibility: 80, testability: 84 },
-      { id: "h3-4", statement: "실패 군집의 시간적 드리프트는 데이터 분포 변화의 조기 신호로 쓸 수 있다.", basis: "군집 비율 변화가 분포 시프트에 선행", byAgentId: "a-weave", novelty: 83, feasibility: 72, testability: 78 },
+      { id: "h3-1", statement: "실패 발화의 임베딩 군집은 사람이 정의한 오류 분류체계와 NMI 0.6 이상으로 일치한다.", basis: "실패 유형이 표현 공간에서 분리 가능하다는 가정", byAgentId: "x-hypo", novelty: 90, feasibility: 78, testability: 86, recommended: true },
+      { id: "h3-2", statement: "군집 경계 사례만 능동 표집하면 동일 정확도를 표본 40%로 달성한다.", basis: "경계 표본의 정보량이 가장 큼", byAgentId: "x-power", novelty: 86, feasibility: 82, testability: 88 },
+      { id: "h3-3", statement: "슬롯 유형을 조건으로 주면 군집 순도가 유의하게 상승한다.", basis: "슬롯별 실패 양상의 이질성", byAgentId: "x-prior", novelty: 80, feasibility: 80, testability: 84 },
+      { id: "h3-4", statement: "실패 군집의 시간적 드리프트는 데이터 분포 변화의 조기 신호로 쓸 수 있다.", basis: "군집 비율 변화가 분포 시프트에 선행", byAgentId: "x-confound", novelty: 83, feasibility: 72, testability: 78 },
     ],
   },
   {
@@ -127,10 +127,10 @@ export const candidateTopics: CandidateTopic[] = [
     feasibility: 80,
     impact: 82,
     hypotheses: [
-      { id: "h4-1", statement: "노트 인용 그래프 밀도가 0.18을 넘으면 모듈성이 급격히 상승하며 자기조직화가 시작된다.", basis: "퍼콜레이션 임계 현상과의 유사성", byAgentId: "a-weave", novelty: 82, feasibility: 80, testability: 84, recommended: true },
-      { id: "h4-2", statement: "PageRank 상위 5% 노트가 전체 지식의 60%를 연결하는 '암묵지 허브'로 작동한다.", basis: "척도 없는 네트워크의 허브 편중", byAgentId: "a-ingest", novelty: 78, feasibility: 84, testability: 82 },
-      { id: "h4-3", statement: "자동 추출한 엔티티 링크만으로도 사람 큐레이션 그래프의 75% 엣지를 복원한다.", basis: "표면적 공출현이 의미적 연결을 근사", byAgentId: "a-canvas", novelty: 75, feasibility: 82, testability: 80 },
-      { id: "h4-4", statement: "주간 인용 증가율이 일정 값을 넘으면 신규 프로젝트 분기의 선행 지표가 된다.", basis: "주제 응집이 분기에 선행", byAgentId: "a-route", novelty: 76, feasibility: 76, testability: 78 },
+      { id: "h4-1", statement: "노트 인용 그래프 밀도가 0.18을 넘으면 모듈성이 급격히 상승하며 자기조직화가 시작된다.", basis: "퍼콜레이션 임계 현상과의 유사성", byAgentId: "x-hypo", novelty: 82, feasibility: 80, testability: 84, recommended: true },
+      { id: "h4-2", statement: "PageRank 상위 5% 노트가 전체 지식의 60%를 연결하는 '암묵지 허브'로 작동한다.", basis: "척도 없는 네트워크의 허브 편중", byAgentId: "x-power", novelty: 78, feasibility: 84, testability: 82 },
+      { id: "h4-3", statement: "자동 추출한 엔티티 링크만으로도 사람 큐레이션 그래프의 75% 엣지를 복원한다.", basis: "표면적 공출현이 의미적 연결을 근사", byAgentId: "x-prior", novelty: 75, feasibility: 82, testability: 80 },
+      { id: "h4-4", statement: "주간 인용 증가율이 일정 값을 넘으면 신규 프로젝트 분기의 선행 지표가 된다.", basis: "주제 응집이 분기에 선행", byAgentId: "x-confound", novelty: 76, feasibility: 76, testability: 78 },
     ],
   },
 ];
@@ -241,10 +241,10 @@ export const graphEdges: GraphEdge[] = [
  * ────────────────────────────────────────────────────────────────────────── */
 
 export const hypothesisExploration: ExploreFragment[] = [
-  { agentId: "a-atom", text: "관측을 검증 가능한 명제로 좁히는 중 — 효과 크기와 임계값을 박아야 반증이 가능하다." },
-  { agentId: "a-sieve", text: "교란 변수 후보를 나열했다. 배치 시점, 디바이스 종류, 보정 데이터 양." },
-  { agentId: "a-gauge", text: "각 가설의 검정력을 사전 추정 중. 표본이 작으면 2번 가설이 유리하다." },
-  { agentId: "a-ember", text: "선행 논문과 충돌하지 않는지 교차 확인 — KV-cache 가설은 EMNLP’25와 정합." },
+  { agentId: "x-hypo", text: "관측을 검증 가능한 명제로 좁히는 중 — 효과 크기와 임계값을 박아야 반증이 가능하다." },
+  { agentId: "x-confound", text: "교란 변수 후보를 나열했다. 배치 시점, 디바이스 종류, 보정 데이터 양." },
+  { agentId: "x-power", text: "각 가설의 검정력을 사전 추정 중. 표본이 작으면 2번 가설이 유리하다." },
+  { agentId: "x-prior", text: "선행 논문과 충돌하지 않는지 교차 확인 — KV-cache 가설은 EMNLP’25와 정합." },
 ];
 
 /* ──────────────────────────────────────────────────────────────────────────
@@ -262,7 +262,7 @@ export interface DesignSection {
 export const designSections: DesignSection[] = [
   {
     id: "ds-var",
-    agentId: "a-atom",
+    agentId: "x-dvar",
     title: "변수 설계",
     lines: [
       "독립변수: {kw0} 적용 비율 (0 / 15 / 30 / 100%)",
@@ -272,7 +272,7 @@ export const designSections: DesignSection[] = [
   },
   {
     id: "ds-base",
-    agentId: "a-forge",
+    agentId: "x-dbase",
     title: "조건군 · 베이스라인",
     lines: [
       "베이스라인 A: FP16 원본",
@@ -282,7 +282,7 @@ export const designSections: DesignSection[] = [
   },
   {
     id: "ds-data",
-    agentId: "a-sieve",
+    agentId: "x-ddata",
     title: "데이터 · 표본",
     lines: [
       "데이터셋: on-device 대화셋 3종 + 누수 검사 통과본",
@@ -292,7 +292,7 @@ export const designSections: DesignSection[] = [
   },
   {
     id: "ds-metric",
-    agentId: "a-gauge",
+    agentId: "x-dmetric",
     title: "평가 지표 · 분석",
     lines: [
       "1차 지표: ΔJGA (처치군 − 베이스라인 B)",
@@ -302,7 +302,7 @@ export const designSections: DesignSection[] = [
   },
   {
     id: "ds-threat",
-    agentId: "a-prism",
+    agentId: "x-dthreat",
     title: "Ablation · 타당도 위협",
     lines: [
       "Ablation: 민감도 추정 방식(분산 vs. Hessian)",
@@ -326,11 +326,11 @@ export interface Professor {
 
 // 연구실 전용 '교수' 페르소나 — 기존 에이전트 로스터와 별개.
 export const professors: Professor[] = [
-  { id: "pf-method", codename: "METHODOS", name: "방법론", emoji: "🧠", accent: "oklch(0.7 0.18 291)" },
-  { id: "pf-stat", codename: "SIGMA", name: "통계·검정력", emoji: "📐", accent: "oklch(0.74 0.13 222)" },
-  { id: "pf-domain", codename: "ORACLE", name: "도메인", emoji: "🔭", accent: "oklch(0.8 0.16 152)" },
-  { id: "pf-repro", codename: "VERITAS", name: "재현성·윤리", emoji: "♻️", accent: "oklch(0.77 0.11 195)" },
-  { id: "pf-critic", codename: "ADVOCATE", name: "비판적 검토", emoji: "🗡️", accent: "oklch(0.72 0.18 350)" },
+  { id: "pf-method", codename: "방법론 교수", name: "연구 설계·방법론", emoji: "🧠", accent: "oklch(0.7 0.18 291)" },
+  { id: "pf-stat", codename: "통계 교수", name: "검정력·통계 분석", emoji: "📐", accent: "oklch(0.74 0.13 222)" },
+  { id: "pf-domain", codename: "도메인 교수", name: "현장 적용·도메인", emoji: "🔭", accent: "oklch(0.8 0.16 152)" },
+  { id: "pf-repro", codename: "재현성 교수", name: "재현성·연구윤리", emoji: "♻️", accent: "oklch(0.77 0.11 195)" },
+  { id: "pf-critic", codename: "비판 교수", name: "반론·취약점 검증", emoji: "🗡️", accent: "oklch(0.72 0.18 350)" },
 ];
 
 export type FeedbackKind = "question" | "critique" | "concur" | "revise" | "concern";

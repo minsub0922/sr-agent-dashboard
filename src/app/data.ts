@@ -122,8 +122,27 @@ export const agents: Agent[] = [
   { id: "a-spark", codename: "SPARK", name: "서브 · 해커톤", emoji: "✨", role: "sub", specialty: "아이디어/경쟁사 조사/데모/발표", status: "processing", accent: C_INTERN, projectId: "p-intern", notesRouted: 142, accuracy: 87 },
 ];
 
+// ── 연구실 전용 전문가(experts) ──────────────────────────────────────────────
+// 공동연구 세션의 가설·실험설계 단계에서 활동하는, 각 프로세스에 특화된 전문가.
+// 기본 로스터(agents)와 분리해 두어 에이전트 탭 집계 등에는 섞이지 않게 하고,
+// 이름은 한국어 직무명으로 두어 역할이 바로 읽히게 한다. getAgent가 함께 조회한다.
+export const labExperts: Agent[] = [
+  // 가설 단계 — 관측을 반증 가능한 명제로 벼리는 전문가들
+  { id: "x-hypo", codename: "가설설계자", name: "가설 정식화", emoji: "🎯", role: "sub", specialty: "관측을 반증 가능한 명제로 정식화", status: "processing", accent: "oklch(0.7 0.18 291)", projectId: null, notesRouted: 0, accuracy: 95 },
+  { id: "x-confound", codename: "변수통제자", name: "교란·통제 변수", emoji: "🧮", role: "sub", specialty: "교란 변수 식별과 통제 설계", status: "active", accent: "oklch(0.74 0.13 222)", projectId: null, notesRouted: 0, accuracy: 93 },
+  { id: "x-power", codename: "검정력분석가", name: "표본·검정력", emoji: "📐", role: "sub", specialty: "검정력·표본수 사전 추정", status: "processing", accent: "oklch(0.8 0.16 152)", projectId: null, notesRouted: 0, accuracy: 94 },
+  { id: "x-prior", codename: "선행연구검토자", name: "선행연구 정합", emoji: "📚", role: "sub", specialty: "선행 연구와의 정합성 교차검증", status: "active", accent: "oklch(0.77 0.11 195)", projectId: null, notesRouted: 0, accuracy: 92 },
+
+  // 실험설계 단계 — 프로토콜을 섹션별로 분담하는 전문가들
+  { id: "x-dvar", codename: "변수설계자", name: "변수 설계", emoji: "🎚️", role: "sub", specialty: "독립·종속·통제 변수 정의", status: "processing", accent: "oklch(0.7 0.18 291)", projectId: null, notesRouted: 0, accuracy: 94 },
+  { id: "x-dbase", codename: "대조군설계자", name: "조건군·베이스라인", emoji: "⚖️", role: "sub", specialty: "베이스라인과 처치군 구성", status: "active", accent: "oklch(0.83 0.15 85)", projectId: null, notesRouted: 0, accuracy: 93 },
+  { id: "x-ddata", codename: "표본설계자", name: "데이터·표본", emoji: "🗃️", role: "sub", specialty: "데이터셋·표본수·누수 검사", status: "active", accent: "oklch(0.74 0.13 222)", projectId: null, notesRouted: 0, accuracy: 93 },
+  { id: "x-dmetric", codename: "지표분석가", name: "평가 지표·분석", emoji: "📈", role: "sub", specialty: "1·2차 지표와 통계 분석 설계", status: "processing", accent: "oklch(0.8 0.16 152)", projectId: null, notesRouted: 0, accuracy: 94 },
+  { id: "x-dthreat", codename: "타당도검토자", name: "타당도·Ablation", emoji: "🔬", role: "sub", specialty: "타당도 위협과 ablation 설계", status: "active", accent: "oklch(0.72 0.18 350)", projectId: null, notesRouted: 0, accuracy: 92 },
+];
+
 export function getAgent(id: string | null): Agent | undefined {
-  return agents.find((a) => a.id === id);
+  return agents.find((a) => a.id === id) ?? labExperts.find((a) => a.id === id);
 }
 
 // ── 프로젝트 ───────────────────────────────────────────────────────────────
