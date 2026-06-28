@@ -13,6 +13,7 @@ import { KnowledgeView } from "./components/knowledge-view";
 import { SkillsView } from "./components/skills-view";
 import { ChannelsView } from "./components/channels-view";
 import { ProjectPage } from "./components/project-page";
+import { ResearchFlow } from "./components/research-flow";
 import { AgentDetail } from "./components/agent-detail";
 import { notes as seedNotes, getProject, getAgent, type Note } from "./data";
 import { planOrganize, registerPlan, type OrganizePlan } from "./inbox-organize";
@@ -56,12 +57,14 @@ export default function App() {
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [openProject, setOpenProject] = useState<string | null>(null);
   const [openAgent, setOpenAgent] = useState<string | null>(null);
+  const [labSessionOpen, setLabSessionOpen] = useState(false);
   const [tourStep, setTourStep] = useState<number | null>(null);
 
   const inboxCount = notes.filter((n) => n.stage === "inbox").length;
 
   const navigate = useCallback((v: ViewKey) => {
     setOpenProject(null);
+    setLabSessionOpen(false);
     setView(v);
   }, []);
 
@@ -130,7 +133,9 @@ export default function App() {
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 overflow-y-auto">
           <main className="px-7 py-6">
-            {openProject ? (
+            {labSessionOpen ? (
+              <ResearchFlow onBack={() => setLabSessionOpen(false)} onOpenAgent={setOpenAgent} />
+            ) : openProject ? (
               <ProjectPage
                 projectId={openProject}
                 notes={notes}
@@ -149,7 +154,7 @@ export default function App() {
                 {view === "inbox" && <InboxView notes={notes} onRoute={handleRoute} onBuildPlan={buildPlan} onCommitPlan={commitPlan} />}
                 {view === "projects" && <ProjectsView onOpenProject={setOpenProject} />}
                 {view === "agents" && <AgentsView onOpenAgent={setOpenAgent} />}
-                {view === "lab" && <LabView onOpenAgent={setOpenAgent} />}
+                {view === "lab" && <LabView onOpenAgent={setOpenAgent} onStartSession={() => setLabSessionOpen(true)} />}
                 {view === "knowledge" && <KnowledgeView onOpenProject={setOpenProject} />}
                 {view === "skills" && <SkillsView onOpenAgent={setOpenAgent} />}
                 {view === "channels" && <ChannelsView />}

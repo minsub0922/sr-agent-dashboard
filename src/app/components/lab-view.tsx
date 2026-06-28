@@ -542,7 +542,7 @@ function StatChip({ icon: Icon, label, value, suffix, accent }: { icon: typeof T
  * 메인 뷰
  * ────────────────────────────────────────────────────────────────────────── */
 
-export function LabView({ onOpenAgent }: { onOpenAgent: (id: string) => void }) {
+export function LabView({ onOpenAgent, onStartSession }: { onOpenAgent: (id: string) => void; onStartSession?: () => void }) {
   const totalPapers = researchTopics.reduce((s, t) => s + t.papers, 0);
   const totalIdeas = researchTopics.reduce((s, t) => s + t.ideas, 0);
 
@@ -563,12 +563,9 @@ export function LabView({ onOpenAgent }: { onOpenAgent: (id: string) => void }) 
           <span className="font-mono text-[11px] text-muted-foreground">
             {labSession.startedLabel} · 참여 {labSession.participants} · {labSession.cycles}번째 사이클
           </span>
-          <button
-            className="ml-auto hidden items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
-            title="라이브 데모"
-          >
+          <span className="ml-auto hidden items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 font-mono text-[11px] text-muted-foreground sm:inline-flex">
             <RefreshCw className="size-3.5" /> 자동 진행 중
-          </button>
+          </span>
         </div>
 
         <h2 className="mt-4 max-w-2xl text-2xl leading-snug tracking-tight sm:text-3xl">
@@ -577,6 +574,21 @@ export function LabView({ onOpenAgent }: { onOpenAgent: (id: string) => void }) 
         <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           각 프로젝트의 담당 에이전트가 한 테이블에 모여 실험 주제를 정하고, 선행 연구를 탐색하고, 아이디어를 주고받으며 자율적으로 연구를 진행합니다.
         </p>
+
+        {/* 데모 진입 CTA */}
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <button
+            onClick={onStartSession}
+            className="group inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:opacity-90"
+          >
+            <Sparkles className="size-4" />
+            6단계 공동연구 데모 시작
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
+          <span className="font-mono text-[11px] text-muted-foreground">
+            주제 탐색 → 논문·지식그래프 → 가설 → 실험설계 → 상호피드백 → 논문 합성
+          </span>
+        </div>
 
         {/* 협업 그래프 */}
         <div className="mt-2">
