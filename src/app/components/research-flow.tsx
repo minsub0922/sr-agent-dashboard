@@ -125,6 +125,56 @@ function StageHeading({ icon: Icon, kicker, title, desc, right }: { icon: typeof
   );
 }
 
+// 에이전트 답변(스트리밍)이 끝난 뒤, 버튼을 눌러야 다음 산출물을 생성하는 게이트.
+// ready=false면 대기(비활성), ready=true면 생성 버튼 노출.
+function GenerateGate({
+  icon: Icon,
+  ready,
+  onGenerate,
+  label,
+  waitingLabel,
+  hint,
+}: {
+  icon: typeof Sparkles;
+  ready: boolean;
+  onGenerate: () => void;
+  label: string;
+  waitingLabel: string;
+  hint?: string;
+}) {
+  return (
+    <div className="lab-rise flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card/40 px-5 py-10 text-center">
+      <span className="grid size-12 place-items-center rounded-2xl border border-primary/30 bg-primary/10 text-primary">
+        <Icon className="size-6" />
+      </span>
+      {hint && <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">{hint}</p>}
+      <button
+        onClick={onGenerate}
+        disabled={!ready}
+        className={cn(
+          "group inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
+          ready
+            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:opacity-90"
+            : "cursor-not-allowed border border-border bg-card text-muted-foreground opacity-60",
+        )}
+      >
+        {ready ? (
+          <>
+            <Sparkles className="size-4" />
+            {label}
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </>
+        ) : (
+          <>
+            <Loader2 className="size-4 animate-spin" />
+            {waitingLabel}
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
 /* ──────────────────────────────────────────────────────────────────────────
  * 메인 — 6단계 세션 셸
  * ────────────────────────────────────────────────────────────────────────── */
@@ -357,21 +407,23 @@ function StageTopic({
   onReady: () => void;
   onOpenAgent: (id: string) => void;
 }) {
-  // 1) 리드 에이전트 탐색 단상 스트리밍 → 2) 오케스트레이터 큐레이션 → 3) 후보 4개 노출.
+  // 1) 리드 에이전트 탐색 단상 스트리밍 → 2) '후보군 생성하기' 버튼 → 3) 큐레이션 → 후보 4개 노출.
   const shown = useReveal(topicExploration.length, 520, run);
   const explored = shown >= topicExploration.length;
-  const [curated, setCurated] = useState(!run);
+  // 재방문(!run)이거나 이미 주제를 고른 경우엔 버튼 없이 바로 후보 노출.
+  const [curated, setCurated] = useState(!run || !!selectedId);
+  const [generating, setGenerating] = useState(false);
+  const genTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (!run) {
+  const generate = useCallback(() => {
+    setGenerating(true);
+    genTimer.current = setTimeout(() => {
       setCurated(true);
-      return;
-    }
-    if (explored) {
-      const t = setTimeout(() => setCurated(true), 1100);
-      return () => clearTimeout(t);
-    }
-  }, [explored, run]);
+      setGenerating(false);
+    }, 900);
+  }, []);
+
+  useEffect(() => () => { if (genTimer.current) clearTimeout(genTimer.current); }, []);
 
   useEffect(() => {
     if (curated) onReady();
@@ -424,9 +476,13 @@ function StageTopic({
                   curated ? "border-signal/40 bg-signal/10 text-signal" : "border-primary/40 bg-primary/10 text-primary",
                 )}
               >
-                {curated ? <Check className="size-3.5" /> : <Loader2 className="size-3.5 animate-spin" />}
+                {curated ? <Check className="size-3.5" /> : generating ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
                 <AgentAvatar agent={getAgent("a-atlas")!} size={18} showRing={false} />
-                {curated ? "오케스트레이터 큐레이션 완료 · 후보 4개" : "SRNote 오케스트레이터가 큐레이션 중…"}
+                {curated
+                  ? "오케스트레이터 큐레이션 완료 · 후보 4개"
+                  : generating
+                    ? "SRNote 오케스트레이터가 큐레이션 중…"
+                    : "탐색 완료 · 후보군 생성을 기다리는 중"}
               </div>
             )}
           </div>
@@ -443,12 +499,21 @@ function StageTopic({
                 <TopicCandidateCard key={t.id} topic={t} index={i} selected={selectedId === t.id} onSelect={() => onSelect(t.id)} onOpenAgent={onOpenAgent} />
               ))}
             </div>
-          ) : (
+          ) : generating ? (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="h-44 animate-pulse rounded-xl border border-border bg-card/50" />
               ))}
             </div>
+          ) : (
+            <GenerateGate
+              icon={Sparkles}
+              ready={explored}
+              onGenerate={generate}
+              label="후보군 생성하기"
+              waitingLabel="에이전트 탐색을 기다리는 중…"
+              hint="오케스트레이터가 탐색 결과를 큐레이션해 참신성·실현성으로 4개 후보를 추립니다."
+            />
           )}
         </div>
       </div>
@@ -822,14 +887,21 @@ function StageHypothesis({
 }) {
   const shown = useReveal(hypothesisExploration.length, 620, true);
   const explored = shown >= hypothesisExploration.length;
-  const [refined, setRefined] = useState(false);
+  // 이미 가설을 고른 재방문이면 버튼 없이 바로 후보 노출.
+  const [refined, setRefined] = useState(!!selectedId);
+  const [generating, setGenerating] = useState(false);
+  const genTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (explored) {
-      const t = setTimeout(() => setRefined(true), 900);
-      return () => clearTimeout(t);
-    }
-  }, [explored]);
+  const generate = useCallback(() => {
+    setGenerating(true);
+    genTimer.current = setTimeout(() => {
+      setRefined(true);
+      setGenerating(false);
+    }, 900);
+  }, []);
+
+  useEffect(() => () => { if (genTimer.current) clearTimeout(genTimer.current); }, []);
+
   useEffect(() => {
     if (refined) onReady();
   }, [refined, onReady]);
@@ -874,7 +946,15 @@ function StageHypothesis({
             })}
             {!refined && (
               <div className="flex items-center gap-2 px-1 font-mono text-[11px] text-muted-foreground">
-                <Loader2 className="size-3.5 animate-spin" /> {explored ? "후보 정리 중…" : "가설 발산 중…"}
+                {explored && !generating ? (
+                  <>
+                    <Check className="size-3.5 text-signal" /> 발산 완료 · 후보 생성을 기다리는 중
+                  </>
+                ) : (
+                  <>
+                    <Loader2 className="size-3.5 animate-spin" /> {explored ? "후보 정리 중…" : "가설 발산 중…"}
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -891,12 +971,21 @@ function StageHypothesis({
                 <HypoCard key={h.id} hypo={h} index={i} selected={selectedId === h.id} onSelect={() => onSelect(h.id)} onOpenAgent={onOpenAgent} />
               ))}
             </div>
-          ) : (
+          ) : generating ? (
             <div className="space-y-2.5">
               {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="h-24 animate-pulse rounded-xl border border-border bg-card/50" />
               ))}
             </div>
+          ) : (
+            <GenerateGate
+              icon={Sparkles}
+              ready={explored}
+              onGenerate={generate}
+              label="후보군 생성하기"
+              waitingLabel="가설 발산을 기다리는 중…"
+              hint="에이전트들이 발산한 관측을 반증 가능한 후보 가설로 정리합니다."
+            />
           )}
         </div>
       </div>
@@ -1246,6 +1335,8 @@ function StageSynthesis({ topic, tokenMap, onReady }: { topic: CandidateTopic; t
   const chunkN = useReveal(contextChunks.length, 340, true);
   const chunksDone = chunkN >= contextChunks.length;
   const [compacted, setCompacted] = useState(false);
+  // 압축 완료 후 '초안 생성하기' 버튼을 눌러야 초안 작성으로 넘어감.
+  const [drafting, setDrafting] = useState(false);
 
   useEffect(() => {
     if (chunksDone && !compacted) {
@@ -1261,7 +1352,7 @@ function StageSynthesis({ topic, tokenMap, onReady }: { topic: CandidateTopic; t
         kicker="STAGE 06 · 지식 합성"
         title="모든 컨텍스트를 압축해 논문 초안으로 합성합니다"
         desc="주제·논문·그래프·가설·실험설계·피드백을 하나의 컨텍스트로 압축하고, 합성 에이전트가 최종 지식으로 엮어 논문 초안을 작성합니다."
-        right={<ActiveAgents ids={["a-atlas", "a-weave"]} label={compacted ? "초안 합성" : "컨텍스트 압축"} busy />}
+        right={<ActiveAgents ids={["a-atlas", "a-weave"]} label={drafting ? "초안 합성" : compacted ? "압축 완료" : "컨텍스트 압축"} busy={drafting || !compacted} />}
       />
 
       {/* 압축 단계 */}
@@ -1293,8 +1384,19 @@ function StageSynthesis({ topic, tokenMap, onReady }: { topic: CandidateTopic; t
         </div>
       </div>
 
-      {/* 초안 */}
-      {compacted && <DraftWriter topic={topic} tokenMap={tokenMap} onComplete={onReady} />}
+      {/* 초안 생성 게이트 → 초안 */}
+      {drafting ? (
+        <DraftWriter topic={topic} tokenMap={tokenMap} onComplete={onReady} />
+      ) : (
+        <GenerateGate
+          icon={FileText}
+          ready={compacted}
+          onGenerate={() => setDrafting(true)}
+          label="초안 생성하기"
+          waitingLabel="컨텍스트 압축을 기다리는 중…"
+          hint="압축된 합성 코어를 바탕으로 합성 에이전트가 논문 초안을 작성합니다."
+        />
+      )}
     </div>
   );
 }
