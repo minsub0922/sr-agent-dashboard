@@ -1082,7 +1082,7 @@ function StageDesign({
           const writing = i === tick - 1 && !done;
           const a = getAgent(sec.agentId)!;
           if (!visible) {
-            return <div key={sec.id} className="h-40 rounded-xl border border-dashed border-border bg-card/30" />;
+            return <div key={sec.id} className="h-52 rounded-xl border border-dashed border-border bg-card/30" />;
           }
           return (
             <div key={sec.id} className="lab-rise overflow-hidden rounded-xl border border-border bg-card">
@@ -1096,9 +1096,37 @@ function StageDesign({
                 </div>
                 <span className="ml-auto font-mono text-[9px] uppercase tracking-widest text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
               </div>
+
+              {/* 추론 과정 — 결정에 앞선 사고 흐름 */}
+              <div className="border-b border-dashed border-border/60 bg-background/40 px-3 py-2">
+                <div className="mb-1 flex items-center gap-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <BrainCircuit className="size-3" /> 추론 과정
+                </div>
+                <ul className="space-y-1">
+                  {sec.reasoning.map((rn, ri) => (
+                    <li
+                      key={ri}
+                      className="lab-rise flex gap-1.5 text-[11.5px] italic leading-snug text-muted-foreground"
+                      style={{ animationDelay: `${ri * 150}ms` }}
+                    >
+                      <span className="mt-1.5 size-1 shrink-0 rounded-full" style={{ background: `color-mix(in oklab, ${a.accent} 70%, transparent)` }} />
+                      <span>{fill(rn, tokenMap)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* 설계 결정 */}
               <ul className="space-y-1.5 p-3">
+                <li className="mb-0.5 flex items-center gap-1 font-mono text-[9px] uppercase tracking-widest" style={{ color: a.accent }}>
+                  <Check className="size-3" /> 설계 결정
+                </li>
                 {sec.lines.map((ln, li) => (
-                  <li key={li} className="lab-rise flex gap-1.5 text-[12.5px] leading-snug text-foreground/90" style={{ animationDelay: `${li * 160}ms` }}>
+                  <li
+                    key={li}
+                    className="lab-rise flex gap-1.5 text-[12.5px] leading-snug text-foreground/90"
+                    style={{ animationDelay: `${(sec.reasoning.length + li) * 150}ms` }}
+                  >
                     <span className="mt-1.5 size-1 shrink-0 rounded-full bg-primary/70" />
                     <span>{fill(ln, tokenMap)}</span>
                   </li>
@@ -1112,15 +1140,103 @@ function StageDesign({
             </div>
           );
         })}
-
-        {done && (
-          <div className="lab-rise flex flex-col items-center justify-center gap-2 rounded-xl border border-signal/40 bg-signal/[0.07] p-4 text-center">
-            <CheckCircle2 className="size-7 text-signal" />
-            <div className="text-sm">실험 설계 동결</div>
-            <p className="font-mono text-[11px] text-muted-foreground">5개 섹션 · 교차 검토 준비 완료</p>
-          </div>
-        )}
       </div>
+
+      {/* 연구 파이프라인 — 추론이 끝난 설계를 한눈에 */}
+      {done && <DesignPipeline hypo={hypo} tokenMap={tokenMap} onOpenAgent={onOpenAgent} />}
+    </div>
+  );
+}
+
+/* 실험 설계를 입력(가설) → 5개 설계 단계 → 예상 결과의 파이프라인으로 한눈에 보여준다. */
+function DesignPipeline({
+  hypo,
+  tokenMap,
+  onOpenAgent,
+}: {
+  hypo: HypothesisCandidate;
+  tokenMap: Record<string, string>;
+  onOpenAgent: (id: string) => void;
+}) {
+  return (
+    <div className="lab-rise space-y-3">
+      <div className="flex items-center gap-2">
+        <Network className="size-4 text-primary" />
+        <h3 className="text-sm tracking-tight">연구 파이프라인</h3>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">한눈에 보기</span>
+        <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-signal/15 px-2 py-0.5 font-mono text-[10px] text-signal">
+          <CheckCircle2 className="size-3" /> 설계 확정
+        </span>
+      </div>
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card p-4">
+        <div className="flex min-w-max items-stretch gap-1.5">
+          <PipelineNode kind="anchor" glyph={<FlaskConical className="size-4" />} stage="확정 가설" spec={hypo.statement} accent="var(--signal)" />
+          <PipelineArrow />
+          {designSections.map((sec, i) => {
+            const a = getAgent(sec.agentId)!;
+            return (
+              <div key={sec.id} className="flex items-stretch gap-1.5">
+                <PipelineNode emoji={a.emoji} stage={sec.flow.stage} spec={fill(sec.flow.spec, tokenMap)} accent={a.accent} index={i + 1} onClick={() => onOpenAgent(a.id)} />
+                <PipelineArrow />
+              </div>
+            );
+          })}
+          <PipelineNode kind="output" glyph={<Target className="size-4" />} stage="예상 결과" spec="JGA −2%p 이내 · p95 −45%" accent="var(--primary)" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PipelineArrow() {
+  return (
+    <div className="flex shrink-0 items-center self-center px-0.5 text-muted-foreground/50">
+      <ArrowRight className="size-4" />
+    </div>
+  );
+}
+
+function PipelineNode({
+  kind,
+  emoji,
+  glyph,
+  stage,
+  spec,
+  accent,
+  index,
+  onClick,
+}: {
+  kind?: "anchor" | "output";
+  emoji?: string;
+  glyph?: ReactNode;
+  stage: string;
+  spec: string;
+  accent: string;
+  index?: number;
+  onClick?: () => void;
+}) {
+  return (
+    <div
+      onClick={onClick}
+      className={cn(
+        "relative flex w-[126px] shrink-0 flex-col gap-1.5 overflow-hidden rounded-xl border bg-background/50 p-2.5 text-left transition-colors",
+        kind ? "border-dashed" : "",
+        onClick ? "cursor-pointer hover:border-primary/50" : "",
+      )}
+      style={{ borderColor: `color-mix(in oklab, ${accent} 35%, var(--border))` }}
+    >
+      <span className="absolute inset-x-0 top-0 h-0.5" style={{ background: accent }} />
+      <div className="flex items-center gap-1.5">
+        <span
+          className="grid size-6 shrink-0 place-items-center rounded-lg text-[13px]"
+          style={{ background: `color-mix(in oklab, ${accent} 16%, transparent)`, color: accent }}
+        >
+          {emoji ?? glyph}
+        </span>
+        <span className="truncate text-[12px] font-medium">{stage}</span>
+        {index != null && <span className="ml-auto font-mono text-[9px] text-muted-foreground">{String(index).padStart(2, "0")}</span>}
+      </div>
+      <p className="line-clamp-3 text-[11px] leading-snug text-muted-foreground">{spec}</p>
     </div>
   );
 }

@@ -255,7 +255,9 @@ export interface DesignSection {
   id: string;
   agentId: string;
   title: string;
+  reasoning: string[]; // 결정에 앞선 추론 과정 (순차 노출)
   lines: string[]; // 항목별 라인 (타이핑되듯 순차 노출)
+  flow: { stage: string; spec: string }; // 연구 파이프라인 한눈에 보기용 요약
 }
 
 // {hyp} {kw0} {kw1} {topic} 토큰은 컴포넌트에서 치환.
@@ -264,51 +266,76 @@ export const designSections: DesignSection[] = [
     id: "ds-var",
     agentId: "x-dvar",
     title: "변수 설계",
+    reasoning: [
+      "무엇을 조작하고 무엇을 잴지부터 가른다 — 처치는 {kw0} 적용 비율.",
+      "결과를 흐릴 요인은 통제로 묶는다 — 보정량·디바이스·시드 고정.",
+    ],
     lines: [
       "독립변수: {kw0} 적용 비율 (0 / 15 / 30 / 100%)",
       "종속변수: JGA 정확도, p95 지연(ms)",
       "통제변수: 보정 데이터 양, 디바이스 종류, 시드",
     ],
+    flow: { stage: "변수", spec: "{kw0} 비율 0–100%" },
   },
   {
     id: "ds-base",
     agentId: "x-dbase",
     title: "조건군 · 베이스라인",
+    reasoning: [
+      "이득을 주장하려면 비교 기준이 둘 필요하다 — 무압축과 전구간 압축.",
+      "제안 기법은 두 기준 사이에서 우위를 보여야 의미가 산다.",
+    ],
     lines: [
       "베이스라인 A: FP16 원본",
       "베이스라인 B: 전구간 INT4 PTQ",
       "처치군: {kw1} 기반 하이브리드 (제안)",
     ],
+    flow: { stage: "조건군", spec: "FP16 · INT4 · 하이브리드" },
   },
   {
     id: "ds-data",
     agentId: "x-ddata",
     title: "데이터 · 표본",
+    reasoning: [
+      "결론의 신뢰도는 표본이 좌우한다 — 검정력 0.8을 먼저 건다.",
+      "누수가 있으면 지표가 부풀려진다 — 누수 검사 통과본만 쓴다.",
+    ],
     lines: [
       "데이터셋: on-device 대화셋 3종 + 누수 검사 통과본",
       "표본수: 조건당 1,200 발화 · 5 시드 반복",
       "검정력: 0.80 (α=0.05, 효과크기 d=0.4 가정)",
     ],
+    flow: { stage: "표본", spec: "1,200 발화 × 5 시드" },
   },
   {
     id: "ds-metric",
     agentId: "x-dmetric",
     title: "평가 지표 · 분석",
+    reasoning: [
+      "주장과 직결되는 1차 지표를 고정한다 — ΔJGA.",
+      "디바이스 편차는 혼합효과 모형으로 흡수한다.",
+    ],
     lines: [
       "1차 지표: ΔJGA (처치군 − 베이스라인 B)",
       "2차 지표: p95 지연 절감률, 메모리 footprint",
       "분석: 혼합효과 모형 + 부트스트랩 CI",
     ],
+    flow: { stage: "측정·분석", spec: "JGA·p95 → 혼합효과" },
   },
   {
     id: "ds-threat",
     agentId: "x-dthreat",
     title: "Ablation · 타당도 위협",
+    reasoning: [
+      "결과가 특정 선택에 기댄 건 아닌지 ablation으로 가른다.",
+      "열 스로틀링·모델 규모가 외적 타당도를 흔든다.",
+    ],
     lines: [
       "Ablation: 민감도 추정 방식(분산 vs. Hessian)",
       "내적 타당도: 디바이스 열 스로틀링 통제",
       "외적 타당도: 모델 2종(0.5B/1.3B)로 재현",
     ],
+    flow: { stage: "타당도", spec: "ablation · 2모델 재현" },
   },
 ];
 
